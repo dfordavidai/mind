@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MirrorMind · Psychological Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg:      #0c0c0c;
+      --bg2:     #111111;
+      --bg3:     #161616;
+      --bg4:     #1c1c1c;
+      --line:    #2a2a2a;
+      --line2:   #333333;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --gold-dim:#8a6f2e;
+      --cream:   #f0e8d8;
+      --text:    #e8e2d8;
+      --text2:   #9a9490;
+      --text3:   #5a5550;
+      --red:     #c0392b;
+      --red-dim: rgba(192,57,43,0.15);
+      --green:   #27ae60;
+      --green-dim: rgba(39,174,96,0.12);
+      --amber:   #e67e22;
+      --amber-dim: rgba(230,126,34,0.12);
+      --mono:    'IBM Plex Mono', monospace;
+      --sans:    'IBM Plex Sans', sans-serif;
+      --serif:   'Playfair Display', serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: #080808;
+      font-family: var(--sans);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    #app {
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg);
+      height: 100dvh;
+      max-height: 900px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      border-left: 1px solid var(--line2);
+      border-right: 1px solid var(--line2);
+    }
+
+    @media(min-width: 600px) {
+      #app {
+        border-radius: 4px;
+        height: 860px;
+        box-shadow: 0 60px 120px -20px rgba(0,0,0,0.9), 0 0 0 1px var(--line2);
+      }
+    }
+
+    /* ── HEADER ── */
+    .app-header {
+      padding: 14px 20px 12px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+      position: relative;
+    }
+    .app-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 20px; right: 20px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+    .header-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+    .app-logo {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-rule {
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+      vertical-align: middle;
+      margin: 0 2px;
+    }
+    .header-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--gold-dim);
+      padding: 3px 8px;
+    }
+    .header-sub {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text3);
+      letter-spacing: 0.06em;
+      margin-top: 5px;
+    }
+
+    /* ── SCROLL AREA ── */
+    .view-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line2) transparent;
+    }
+    .view-container::-webkit-scrollbar { width: 2px; }
+    .view-container::-webkit-scrollbar-thumb { background: var(--line2); }
+    .view-inner { padding: 16px 16px 8px; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      display: flex;
+      background: var(--bg2);
+      border-top: 1px solid var(--line);
+      padding: 6px 0 10px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .bottom-nav::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 20px; right: 20px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: var(--text3);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 0 2px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
+    .nav-item i { font-size: 1rem; }
+    .nav-item.active { color: var(--gold); }
+    .nav-item.active i { text-shadow: 0 0 12px rgba(201,168,76,0.4); }
+    .nav-item:hover:not(.active) { color: var(--text2); }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--cream);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .page-title-row .page-title { margin: 0; }
+
+    /* ── SECTION LABEL ── */
+    .sec-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 14px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sec-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .card-gold {
+      border-color: var(--gold-dim);
+    }
+    .card-gold::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    }
+
+    /* ── PERSON CARD (library) ── */
+    .person-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      padding: 12px 14px;
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      margin-bottom: 8px;
+      transition: border-color 0.15s, background 0.1s;
+      position: relative;
+    }
+    .person-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 4px; bottom: 4px;
+      width: 2px;
+      background: transparent;
+      transition: background 0.15s;
+    }
+    .person-card:hover { background: var(--bg3); border-color: var(--line2); }
+    .person-card:hover::before { background: var(--gold); }
+
+    .avatar {
+      width: 44px; height: 44px;
+      background: var(--bg4);
+      border: 1px solid var(--line2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      letter-spacing: -0.05em;
+    }
+    .person-info { flex: 1; min-width: 0; }
+    .person-name {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--cream);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .person-meta {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text3);
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
+    .person-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+    /* ── BADGES ── */
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border: 1px solid;
+      display: inline-block;
+    }
+    .badge-gold { color: var(--gold); border-color: var(--gold-dim); }
+    .badge-red { color: #e87070; border-color: rgba(200,70,70,0.3); background: rgba(200,70,70,0.06); }
+    .badge-green { color: #6bbf7f; border-color: rgba(100,190,130,0.3); background: rgba(100,190,130,0.06); }
+    .badge-amber { color: #d4a04a; border-color: rgba(210,160,70,0.3); background: rgba(210,160,70,0.06); }
+    .badge-blue { color: #7ab0d0; border-color: rgba(100,160,210,0.3); background: rgba(100,160,210,0.06); }
+    .badge-muted { color: var(--text3); border-color: var(--line); }
+
+    /* ── CHIPS & TAGS ── */
+    .chip {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text2);
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.04em;
+    }
+    .chip-gold {
+      color: var(--gold);
+      border-color: var(--gold-dim);
+      background: rgba(201,168,76,0.06);
+    }
+    .flag-chip {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: #d07070;
+      background: rgba(192,57,43,0.08);
+      border: 1px solid rgba(192,57,43,0.2);
+      padding: 5px 10px;
+      display: inline-block;
+      margin: 3px 2px;
+      letter-spacing: 0.03em;
+    }
+    .green-chip {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: #6bbf7f;
+      background: rgba(39,174,96,0.07);
+      border: 1px solid rgba(39,174,96,0.2);
+      padding: 5px 10px;
+      display: inline-block;
+      margin: 3px 2px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 13px 20px;
+      border: 1px solid var(--gold-dim);
+      background: rgba(201,168,76,0.08);
+      color: var(--gold2);
+      cursor: pointer;
+      width: 100%;
+      margin: 6px 0;
+      transition: all 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.14); }
+    .btn:active { transform: translateY(1px); }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line2);
+      color: var(--text2);
+    }
+    .btn-ghost:hover { border-color: var(--text3); background: var(--bg3); }
+    .btn-sm {
+      width: auto;
+      padding: 7px 14px;
+      font-size: 0.65rem;
+      margin: 0;
+    }
+    .btn-danger {
+      border-color: rgba(192,57,43,0.35);
+      background: rgba(192,57,43,0.08);
+      color: #e07070;
+    }
+    .btn-danger:hover { background: rgba(192,57,43,0.14); }
+
+    /* ── FORM ELEMENTS ── */
+    textarea, input[type=text], select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line2);
+      background: var(--bg3);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.15s;
+      margin: 5px 0;
+      -webkit-appearance: none;
+    }
+    textarea:focus, input[type=text]:focus, select:focus {
+      border-color: var(--gold-dim);
+      background: var(--bg4);
+    }
+    select { cursor: pointer; }
+    select option { background: var(--bg3); color: var(--text); }
+    ::placeholder { color: var(--text3); font-size: 0.85rem; }
+
+    /* ── PROGRESS / TRAIT BARS ── */
+    .trait-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+    .trait-name { width: 110px; font-family: var(--mono); font-size: 0.67rem; color: var(--text3); flex-shrink: 0; letter-spacing: 0.04em; }
+    .trait-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--bg4);
+      position: relative;
+    }
+    .trait-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+      transition: width 0.6s ease;
+    }
+    .trait-fill.red { background: linear-gradient(90deg, rgba(192,57,43,0.4), #c0392b); }
+    .trait-fill.green { background: linear-gradient(90deg, rgba(39,174,96,0.4), #27ae60); }
+    .trait-fill.amber { background: linear-gradient(90deg, rgba(230,126,34,0.4), #e67e22); }
+    .trait-val {
+      width: 28px;
+      text-align: right;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text2);
+      font-weight: 500;
+    }
+
+    /* ── QUOTE BLOCK ── */
+    .quote-block {
+      border-left: 2px solid var(--gold-dim);
+      padding: 8px 12px;
+      margin: 5px 0;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--text2);
+      line-height: 1.5;
+      background: rgba(201,168,76,0.03);
+    }
+
+    /* ── INSIGHT BOX ── */
+    .insight-box {
+      background: rgba(201,168,76,0.04);
+      border: 1px solid var(--gold-dim);
+      padding: 10px 13px;
+      margin: 6px 0;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      color: var(--text2);
+      font-weight: 300;
+    }
+
+    /* ── ACCORDION ── */
+    .accordion {
+      border: 1px solid var(--line);
+      margin: 6px 0;
+      background: var(--bg2);
+    }
+    .accordion-header {
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text2);
+      transition: color 0.15s;
+    }
+    .accordion-header:hover { color: var(--text); }
+    .accordion-header i.toggle-icon { transition: transform 0.2s; color: var(--text3); font-size: 0.75rem; }
+    .accordion.open .accordion-header { color: var(--cream); }
+    .accordion.open .accordion-header i.toggle-icon { transform: rotate(180deg); color: var(--gold); }
+    .accordion-body {
+      display: none;
+      padding: 0 14px 12px;
+      border-top: 1px solid var(--line);
+    }
+    .accordion.open .accordion-body { display: block; }
+
+    /* ── PLAYBOOK ITEM ── */
+    .playbook-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .playbook-item:last-child { border-bottom: none; }
+    .playbook-icon { font-size: 1rem; width: 24px; text-align: center; flex-shrink: 0; padding-top: 1px; }
+    .playbook-text strong { font-family: var(--sans); font-size: 0.83rem; color: var(--cream); font-weight: 500; }
+    .playbook-text p { font-size: 0.78rem; color: var(--text3); margin-top: 2px; line-height: 1.4; font-weight: 300; }
+
+    /* ── STATS GRID ── */
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+    .stat-block {
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    /* ── MIRROR TABS ── */
+    .mirror-tabs {
+      display: flex;
+      border: 1px solid var(--line);
+      margin: 10px 0;
+      background: var(--bg2);
+    }
+    .mirror-tab {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text3);
+      background: none;
+      border: none;
+      border-right: 1px solid var(--line);
+      padding: 10px 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mirror-tab:last-child { border-right: none; }
+    .mirror-tab.active { color: var(--gold); background: rgba(201,168,76,0.06); }
+    .mirror-tab:hover:not(.active) { color: var(--text2); background: var(--bg3); }
+
+    /* ── TIMELINE BARS ── */
+    .timeline-bars { display: flex; align-items: flex-end; gap: 3px; height: 56px; margin: 10px 0; }
+    .t-bar {
+      flex: 1;
+      background: rgba(201,168,76,0.3);
+      border-top: 1px solid var(--gold-dim);
+      transition: height 0.4s;
+      cursor: pointer;
+      position: relative;
+    }
+    .t-bar:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg4);
+      border: 1px solid var(--line2);
+      padding: 4px 8px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      white-space: nowrap;
+      color: var(--text2);
+      z-index: 10;
+      margin-bottom: 4px;
+    }
+    .t-bar.negative { background: rgba(192,57,43,0.3); border-top-color: rgba(192,57,43,0.5); }
+    .t-bar.neutral { background: rgba(230,126,34,0.25); border-top-color: rgba(230,126,34,0.4); }
+
+    /* ── SIM CARD ── */
+    .sim-card {
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      border-left: 2px solid var(--gold-dim);
+      padding: 12px 14px;
+      margin: 8px 0;
+    }
+    .sim-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .sim-text { font-size: 0.88rem; color: var(--text); line-height: 1.5; font-weight: 300; }
+
+    /* ── SLIDER ROW ── */
+    .slider-row { margin: 8px 0; }
+    .slider-row label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text2);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+    input[type=range] {
+      width: 100%;
+      height: 3px;
+      -webkit-appearance: none;
+      background: var(--line2);
+      outline: none;
+      margin: 0;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      background: var(--gold);
+      border-radius: 0;
+      cursor: pointer;
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 14px; height: 14px;
+      background: var(--gold);
+      border-radius: 0;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text3);
+    }
+    .empty-state .empty-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.5; }
+    .empty-state p { font-family: var(--sans); font-size: 0.85rem; line-height: 1.6; font-weight: 300; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--line2), transparent);
+      margin: 14px 0;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--bg4);
+      border: 1px solid var(--gold-dim);
+      color: var(--gold2);
+      padding: 9px 18px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      z-index: 999;
+      opacity: 0;
+      transition: all 0.25s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── FILTER ROW ── */
+    .filter-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+    .filter-btn {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .filter-btn.active { color: var(--gold); border-color: var(--gold-dim); background: rgba(201,168,76,0.07); }
+    .filter-btn:hover:not(.active) { color: var(--text2); border-color: var(--line2); }
+
+    /* ── PUBLIC FIGURE BANNER ── */
+    .pf-banner {
+      background: rgba(230,126,34,0.07);
+      border: 1px solid rgba(230,126,34,0.2);
+      padding: 9px 12px;
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: #d4a04a;
+      margin: 5px 0;
+      line-height: 1.5;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── SEARCH INPUT ── */
+    .search-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      padding: 9px 12px;
+      outline: none;
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+    }
+    .search-input:focus { border-color: var(--line2); }
+
+    /* ── DARK TAG ── */
+    .dark-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text3);
+      background: var(--bg3);
+      border: 1px solid var(--line);
+      padding: 3px 9px;
+      display: inline-block;
+      margin: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── MISC ── */
+    .hidden { display: none !important; }
+    .flex-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      font-family: var(--mono);
+      transition: color 0.12s;
+    }
+    .delete-btn:hover { color: #e07070; }
+
+    /* ── STARS ── */
+    .stars { color: var(--gold); font-size: 0.8rem; }
+
+    /* Loading */
+    @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
+    .pulse { animation: pulse 1.5s infinite; }
+
+    /* ── LIBRARY STATS ── */
+    #libStatsArea .stats-grid { grid-template-columns: repeat(3,1fr); }
+    #libStatsArea .stat-value { font-size: 1.3rem; }
+
+    /* ── SELF PROFILE DISPLAY ── */
+    #selfProfileDisplay .self-summary {
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-top: 2px solid var(--gold-dim);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* number callout */
+    .num-callout {
+      font-family: var(--mono);
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    /* inline kv row */
+    .kv { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 0.82rem; }
+    .kv:last-child { border-bottom: none; }
+    .kv-k { color: var(--text3); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.04em; }
+    .kv-v { color: var(--cream); font-weight: 500; font-size: 0.82rem; text-align: right; max-width: 60%; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div class="header-row">
+      <div class="app-logo">
+        <span class="logo-rule"></span>
+        MirrorMind
+      </div>
+      <span class="header-tag">v4 · Ultra</span>
+    </div>
+    <div class="header-sub">18+ · PROBABILISTIC · NOT CLINICAL · BROWSER-LOCAL</div>
+  </div>
+
+  <!-- VIEWS -->
+  <div id="viewContainer" class="view-container">
+
+    <!-- ══ LIBRARY VIEW ══ -->
+    <div id="libraryView" class="view active">
+      <div class="view-inner">
+        <div class="page-title-row">
+          <div class="page-title">Library</div>
+          <button class="btn btn-ghost btn-sm" onclick="setActiveView('input')">+ Add</button>
+        </div>
+
+        <input type="text" class="search-input" id="librarySearch" placeholder="search name or relationship…" oninput="renderLibrary()">
+
+        <div class="filter-row">
+          <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">All</button>
+          <button class="filter-btn" id="filterRed" onclick="setFilter('flagged')">Flagged</button>
+          <button class="filter-btn" id="filterHigh" onclick="setFilter('compatible')">Compatible</button>
+          <button class="filter-btn" id="filterPublic" onclick="setFilter('public')">Public</button>
+        </div>
+
+        <div id="personList"></div>
+        <div id="emptyLibraryMsg" class="empty-state hidden">
+          <div class="empty-icon">◎</div>
+          <p>Your library is empty.<br>Add someone to begin deep psychological analysis.</p>
+        </div>
+        <div id="libStatsArea"></div>
+      </div>
+    </div>
+
+    <!-- ══ INPUT VIEW ══ -->
+    <div id="inputView" class="view">
+      <div class="view-inner">
+        <div class="page-title">Analyze Someone</div>
+
+        <div class="card card-gold">
+          <div class="sec-label">Public Figure</div>
+          <select id="publicFigureSelect">
+            <option value="">— select a public figure —</option>
+            <optgroup label="Nigerian Icons">
+              <option value="burna">Burna Boy</option>
+              <option value="wizkid">Wizkid</option>
+              <option value="davido">Davido</option>
+              <option value="tiwa">Tiwa Savage</option>
+              <option value="okonkwo">Obi Okonkwo (fictional)</option>
+            </optgroup>
+            <optgroup label="African Royals">
+              <option value="dangote">Aliko Dangote</option>
+              <option value="adesanya">Israel Adesanya</option>
+            </optgroup>
+            <optgroup label="Global Icons">
+              <option value="elon">Elon Musk</option>
+              <option value="rihanna">Rihanna</option>
+              <option value="taylor">Taylor Swift</option>
+              <option value="kanye">Kanye West</option>
+              <option value="obama">Barack Obama</option>
+              <option value="jobs">Steve Jobs (historical)</option>
+              <option value="oprah">Oprah Winfrey</option>
+            </optgroup>
+          </select>
+          <button class="btn btn-ghost btn-sm" id="loadPublicBtn" style="margin-top:6px;width:100%">Load Figure</button>
+          <div id="publicFigureInfo" class="pf-banner hidden"></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-label">Manual Entry</div>
+          <input type="text" id="personName" placeholder="Full name *">
+          <input type="text" id="personRelation" placeholder="Relationship (partner, boss, parent…) *">
+          <input type="text" id="personAge" placeholder="Estimated age (optional)">
+          <select id="cultureArchetype">
+            <optgroup label="Nigerian Archetypes">
+              <option value="lg">Lagos Big Man — status-driven, hierarchical</option>
+              <option value="abj">Abuja Elite — political, reputation-conscious</option>
+              <option value="na">Naija Auntie — family-first, proverb-heavy</option>
+              <option value="el">Old School Elder — respect-first, formal</option>
+              <option value="yoruba">Yoruba Gentle — diplomatic, honour-bound</option>
+              <option value="igbo">Igbo Entrepreneur — achievement-driven, direct</option>
+              <option value="hausa">Hausa Traditionalist — reserved, faith-guided</option>
+            </optgroup>
+            <optgroup label="Pan-African">
+              <option value="gh">Ghana Cool — laid-back, education-proud</option>
+              <option value="za">South African Urban — resilient, adaptive</option>
+              <option value="ke">Nairobi Hustler — ambitious, tech-savvy</option>
+            </optgroup>
+            <optgroup label="Global">
+              <option value="gz">Gen-Z Ironic — detached, emotionally guarded</option>
+              <option value="ml">Millennial Burnout — anxious-optimist</option>
+              <option value="int">International / Neutral</option>
+            </optgroup>
+          </select>
+          <select id="relationshipDepth">
+            <option value="casual">Casual acquaintance</option>
+            <option value="close">Close friend / colleague</option>
+            <option value="intimate">Romantic / intimate partner</option>
+            <option value="family">Family member</option>
+            <option value="authority">Authority figure</option>
+          </select>
+          <textarea id="chatHistory" placeholder="Paste chat history, messages, emails, or notes (min 20 chars). More text = deeper analysis." rows="5"></textarea>
+          <input type="text" id="observedTraits" placeholder="Observed traits (optional, comma-separated)">
+          <input type="text" id="concernAreas" placeholder="Areas of concern (optional, e.g. anger, lying)">
+
+          <button class="btn" id="analyzeBtn" style="margin-top:10px">Run Deep Analysis</button>
+          <div style="text-align:center;margin-top:4px;font-family:var(--mono);font-size:0.6rem;color:var(--text3);letter-spacing:0.06em">
+            ALL DATA STAYS IN YOUR BROWSER · NEVER TRANSMITTED
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MIRROR VIEW ══ -->
+    <div id="mirrorView" class="view">
+      <div class="view-inner">
+        <div class="page-title-row">
+          <div class="page-title">Mirror</div>
+          <button class="btn btn-ghost btn-sm" onclick="setActiveView('library')">← Library</button>
+        </div>
+
+        <div id="noPersonMirror" class="empty-state">
+          <div class="empty-icon">◎</div>
+          <p>Select someone from your Library<br>to view their mirror profile.</p>
+        </div>
+
+        <div id="mirrorContent" class="hidden">
+          <div id="mirrorPersonCard"></div>
+
+          <div class="mirror-tabs">
+            <button class="mirror-tab active" id="tabProfile" onclick="showMirrorTab('profile')">Profile</button>
+            <button class="mirror-tab" id="tabSimulate" onclick="showMirrorTab('simulate')">Simulate</button>
+            <button class="mirror-tab" id="tabPlaybook" onclick="showMirrorTab('playbook')">Playbook</button>
+            <button class="mirror-tab" id="tabVoice" onclick="showMirrorTab('voice')">Voice</button>
+          </div>
+
+          <div id="mirrorTabProfile">
+            <div id="bigFiveSection"></div>
+            <div id="valuesSection"></div>
+            <div id="facetsSection"></div>
+            <div id="attachmentSection"></div>
+            <div id="redFlagsSection"></div>
+            <div id="biasesSection"></div>
+            <div id="defensesSection"></div>
+            <div id="loveLanguageSection"></div>
+            <div id="conflictSection"></div>
+            <div id="quotesSection"></div>
+          </div>
+
+          <div id="mirrorTabSimulate" class="hidden">
+            <div class="card">
+              <div class="sec-label">Scenario Simulator</div>
+              <select id="scenarioSelect">
+                <optgroup label="Conflict">
+                  <option value="conflict_argue">Argument / Disagreement</option>
+                  <option value="conflict_silent">Silent treatment / withdrawal</option>
+                  <option value="conflict_boundary">Setting a boundary</option>
+                </optgroup>
+                <optgroup label="Romantic">
+                  <option value="dating_flirt">Flirting / first move</option>
+                  <option value="dating_deeper">Deepening intimacy</option>
+                  <option value="dating_apology">Apology after fight</option>
+                  <option value="dating_breakup">Breaking up</option>
+                </optgroup>
+                <optgroup label="Professional">
+                  <option value="work_ask">Asking for a raise / favour</option>
+                  <option value="work_negotiation">Negotiation</option>
+                  <option value="work_feedback">Giving critical feedback</option>
+                </optgroup>
+                <optgroup label="Social">
+                  <option value="family_elder">Talking to elder / parent</option>
+                  <option value="family_confront">Confronting family issue</option>
+                  <option value="social_persuade">Persuasion / convincing</option>
+                  <option value="social_apology">Reconnecting after distance</option>
+                </optgroup>
+              </select>
+              <textarea id="simInput" placeholder="What would you say to them?" rows="3"></textarea>
+              <button class="btn" id="simulateBtn">Mirror This Interaction</button>
+            </div>
+            <div id="simulationResults"></div>
+          </div>
+
+          <div id="mirrorTabPlaybook" class="hidden">
+            <div id="playbookContent"></div>
+          </div>
+
+          <div id="mirrorTabVoice" class="hidden">
+            <div id="voiceContent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PATTERNS VIEW ══ -->
+    <div id="patternsView" class="view">
+      <div class="view-inner">
+        <div class="page-title">Patterns</div>
+        <select id="patternsPersonSelect" style="margin-bottom:12px">
+          <option value="">— select a person —</option>
+        </select>
+        <div id="patternsContent">
+          <div class="empty-state">
+            <div class="empty-icon">◈</div>
+            <p>Select a person to see their behavioral patterns and timeline.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ YOU VIEW ══ -->
+    <div id="youView" class="view">
+      <div class="view-inner">
+        <div class="page-title">Self Mirror</div>
+
+        <div id="selfProfileDisplay"></div>
+
+        <div class="card">
+          <div class="sec-label">Analyze Your Own Text</div>
+          <textarea id="selfText" placeholder="Paste your own messages, journal entries, or writing (the more the better)…" rows="4"></textarea>
+          <button class="btn" id="runSelfAnalysis">Mirror Yourself</button>
+        </div>
+
+        <div id="selfQuiz" class="card">
+          <div class="sec-label">Quick Self-Assessment</div>
+          <p style="font-family:var(--mono);font-size:0.68rem;color:var(--text3);margin-bottom:10px;letter-spacing:0.04em">Calibrate with sliders (0 = low · 100 = high)</p>
+          <div id="quizSliders"></div>
+          <button class="btn btn-ghost" id="saveQuizBtn" style="margin-top:8px">Save Self-Assessment</button>
+        </div>
+
+        <div id="compareSection" class="hidden">
+          <div class="divider"></div>
+          <div class="sec-label">Compatibility Compare</div>
+          <select id="compareSelect" style="width:100%"></select>
+          <div id="comparisonResult" class="card" style="margin-top:8px"></div>
+        </div>
+
+        <div class="card">
+          <div class="sec-label">Data Management</div>
+          <button class="btn btn-ghost" id="exportReportBtn" style="width:100%">Export Report (.json)</button>
+          <button class="btn btn-ghost" id="importReportBtn" style="width:100%;margin-top:0">Import Report</button>
+          <input type="file" id="importFileInput" accept=".json" class="hidden">
+          <button class="btn btn-danger" id="clearAllBtn" style="width:100%;margin-top:0">Clear All Data</button>
+        </div>
+
+        <!-- Psychology Reference Guide -->
+        <div class="card">
+          <div class="sec-label">Psychology Reference</div>
+
+          <div class="accordion">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Big Five (OCEAN) Explained</span><i class="fa fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="accordion-body" style="font-size:0.8rem;line-height:1.7;color:var(--text3);padding-top:10px">
+              <strong style="color:var(--text2)">Openness</strong> — Intellectual curiosity, creativity, appreciation for new experiences. High = imaginative. Low = prefers routine.<br><br>
+              <strong style="color:var(--text2)">Conscientiousness</strong> — Organization, dependability, self-discipline. High = reliable and goal-directed. Low = spontaneous but may lack follow-through.<br><br>
+              <strong style="color:var(--text2)">Extraversion</strong> — Sociability, assertiveness, positive emotions. High = gains energy from others. Low (introvert) = recharges alone.<br><br>
+              <strong style="color:var(--text2)">Agreeableness</strong> — Cooperativeness, empathy, trust. High = warm and conflict-averse. Low = competitive or skeptical.<br><br>
+              <strong style="color:var(--text2)">Neuroticism</strong> — Emotional instability, anxiety, vulnerability. High = reacts more intensely to stress. Not a character flaw — a measure of emotional sensitivity.
+            </div>
+          </div>
+
+          <div class="accordion" style="margin-top:4px">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Attachment Theory Primer</span><i class="fa fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="accordion-body" style="font-size:0.8rem;line-height:1.7;color:var(--text3);padding-top:10px">
+              Bowlby & Ainsworth: early caregiver responses create internal templates for adult relationships.<br><br>
+              <strong style="color:var(--text2)">Secure</strong> — Comfortable with intimacy and autonomy. Can ask for needs directly. Resilient after conflict.<br>
+              <strong style="color:var(--text2)">Anxious-Preoccupied</strong> — Craves closeness, fears abandonment. Hyperactivates attachment system. May come across as needy.<br>
+              <strong style="color:var(--text2)">Dismissive-Avoidant</strong> — Values independence. Deactivates attachment system. May seem cold or self-contained.<br>
+              <strong style="color:var(--text2)">Fearful-Avoidant</strong> — Desires and fears closeness simultaneously. Linked to early relational trauma.<br><br>
+              Attachment patterns can shift toward security through therapy, self-awareness, and safe relationships.
+            </div>
+          </div>
+
+          <div class="accordion" style="margin-top:4px">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Dark Triad — What It Means</span><i class="fa fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="accordion-body" style="font-size:0.8rem;line-height:1.7;color:var(--text3);padding-top:10px">
+              Three overlapping traits. All humans have some degree of each. Elevated combinations are associated with exploitative behavior.<br><br>
+              <strong style="color:var(--text2)">Narcissism</strong> — Grandiosity, entitlement, limited empathy. Distinguished from healthy confidence by intolerance of criticism.<br><br>
+              <strong style="color:var(--text2)">Machiavellianism</strong> — Strategic manipulation, self-interest prioritization, cynical worldview.<br><br>
+              <strong style="color:var(--text2)">Psychopathy</strong> — Callousness, poor impulse control, shallow affect. Note: subclinical psychopathy is not criminality.<br><br>
+              <em style="color:var(--text3)">MirrorMind scores are probabilistic text estimates — not clinical diagnosis.</em>
+            </div>
+          </div>
+
+          <div class="accordion" style="margin-top:4px">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Love Languages — Full Guide</span><i class="fa fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="accordion-body" style="font-size:0.8rem;line-height:1.7;color:var(--text3);padding-top:10px">
+              <strong style="color:var(--text2)">Words of Affirmation</strong> — Verbal appreciation, compliments, encouragement. Affected deeply by harsh words.<br><br>
+              <strong style="color:var(--text2)">Acts of Service</strong> — Doing helpful things. Actions speak louder than words. Broken promises are deeply hurtful.<br><br>
+              <strong style="color:var(--text2)">Receiving Gifts</strong> — Thoughtful gifts signal "I was thinking of you." Absence of gifts can feel like neglect.<br><br>
+              <strong style="color:var(--text2)">Quality Time</strong> — Undivided attention and presence. Phone distraction during their time is a deep wound.<br><br>
+              <strong style="color:var(--text2)">Physical Touch</strong> — Hugs, hand-holding, proximity. Touch communicates safety more powerfully than words.
+            </div>
+          </div>
+
+          <div class="accordion" style="margin-top:4px">
+            <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Nigerian & African Cultural Intelligence</span><i class="fa fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="accordion-body" style="font-size:0.8rem;line-height:1.7;color:var(--text3);padding-top:10px">
+              <strong style="color:var(--text2)">Collectivism</strong>: Identity rooted in family, community, lineage. Decisions, criticism, and love expression are all filtered through collective belonging.<br><br>
+              <strong style="color:var(--text2)">Face-Saving</strong>: Public humiliation is one of the most damaging acts in high-context cultures. Criticism must be private and indirect. Praise should be public.<br><br>
+              <strong style="color:var(--text2)">Hierarchy & Respect</strong>: Age, wealth, title, and lineage confer authority. Challenging them publicly reads as disrespect, not principle.<br><br>
+              <strong style="color:var(--text2)">Indirect Communication</strong>: Many things said through proverbs, stories, or third-party framing. Directness can be read as aggression.<br><br>
+              <strong style="color:var(--text2)">Code-Switching</strong>: Urban Nigerians and diaspora Africans move fluidly between formal English, Pidgin, and indigenous languages — each carrying distinct relational meaning.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /viewContainer -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="nav-item active" data-view="library"><i class="fa-regular fa-rectangle-list"></i><span>Library</span></button>
+    <button class="nav-item" data-view="input"><i class="fa-regular fa-circle-plus"></i><span>Analyze</span></button>
+    <button class="nav-item" data-view="mirror"><i class="fa fa-mirror"></i><span>Mirror</span></button>
+    <button class="nav-item" data-view="patterns"><i class="fa-regular fa-chart-bar"></i><span>Patterns</span></button>
+    <button class="nav-item" data-view="you"><i class="fa-regular fa-user"></i><span>You</span></button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function() {
+'use strict';
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+let persons = [];
+let currentPersonId = null;
+let selfProfile = null;
+let currentFilter = 'all';
+const STORAGE_KEY = 'mm_v4_persons';
+const SELF_KEY = 'mm_v4_self';
+
+/* ═══════════════════════════════
+   PUBLIC FIGURES DATABASE
+═══════════════════════════════ */
+const publicFigures = {
+  elon: {
+    name: 'Elon Musk', relation: 'public figure', archetype: 'int', age: '52',
+    isPublic: true,
+    bio: 'Tech billionaire, CEO of Tesla & SpaceX, owner of X (Twitter)',
+    chat: "First principles thinking is the only way. The problem with most people is they think by analogy. We need to go to Mars. This is not optional. Tesla is not just a car company, it's an energy and AI company. I work 120 hour weeks. Sleep is for people who have no ambition. The hype around me is absurd but also mostly accurate. Doge. I love trolling the media. Cancel culture is the enemy of progress. I'm the richest man in the world and I still have imposter syndrome sometimes. You always overthink things. Everyone says that can't be done until I do it. I never quit, I just pivot. My son X Æ A-XII will understand this world better than anyone.",
+    observed: 'grandiose, workaholic, contrarian, rule-breaking',
+    concerns: 'impulsivity, narcissism, erratic public behavior'
+  },
+  rihanna: {
+    name: 'Rihanna', relation: 'public figure', archetype: 'int', age: '36',
+    isPublic: true,
+    bio: 'Grammy-winning artist, Fenty Beauty founder, fashion mogul',
+    chat: "Fenty is for everyone, every shade exists because I said so. Work hard play harder. I don't chase people, I attract them. Being a mother changed everything. I had to step back and that was the most powerful decision I ever made. Savage X Fenty redefined lingerie. You can be a mother and still be that girl. I don't need to explain my choices to anyone. Bad Gal RiRi forever. My style is not for everyone and that's fine. I built an empire while people wrote think pieces about my relationship.",
+    observed: 'self-assured, boundary-setting, entrepreneurial, maternal',
+    concerns: ''
+  },
+  burna: {
+    name: 'Burna Boy', relation: 'public figure', archetype: 'lg', age: '32',
+    isPublic: true,
+    bio: 'African Giant, Grammy-winner, Afrobeats superstar',
+    chat: "African Giant. Dem no fit understand our vibe. Last last na we win. I work harder than anyone but I make it look easy. The whole world knows Afrobeats now because of us. Party every night but still number one. I don't respect anyone who doesn't respect themselves first. My grandmother said I would be great and she never lied. Space Ship everywhere we go. Odogwu. My energy is different from everyone. Cameroon in my blood, Lagos in my soul.",
+    observed: 'proud, high self-confidence, charismatic, family-loyal',
+    concerns: ''
+  },
+  wizkid: {
+    name: 'Wizkid', relation: 'public figure', archetype: 'lg', age: '33',
+    isPublic: true,
+    bio: 'Starboy, Grammy-winner, pioneer of Afrobeats globally',
+    chat: "Made in Lagos. This album changed everything. I don't talk too much, I let the music speak. Starboy forever. Essence is a feeling. My kids are everything. I moved different when I decided to be great. You can't rush greatness. Give people flowers when they're alive. Lagos is the best city in the world.",
+    observed: 'introspective, cool, music-first, loyal to roots',
+    concerns: ''
+  },
+  davido: {
+    name: 'Davido', relation: 'public figure', archetype: 'lg', age: '31',
+    isPublic: true,
+    bio: 'OBO, 30BG boss, global Afrobeats icon',
+    chat: "30BG all day. We Rise By Lifting Others. Family first always. I have money but I still stay humble because my father taught me. JOWO. E choke! Timeless album. The streets raised me. Fun for me and my people is everything. I don't care what people say about me because my fans love me unconditionally. Lagos to the world.",
+    observed: 'generous, energetic, community-driven, emotional',
+    concerns: ''
+  },
+  tiwa: {
+    name: 'Tiwa Savage', relation: 'public figure', archetype: 'na', age: '44',
+    isPublic: true,
+    bio: 'African Bad Girl, singer, mother, business woman',
+    chat: "African Bad Girl. Being a mother is my greatest role. Music is therapy. I have been through fire and came out diamonds. Koroba. Women in music have to work ten times harder. I do not apologize for my sensuality. My son sees his mother fight and that is the lesson. Nigeria has the best music in the world.",
+    observed: 'resilient, feminine power, emotionally expressive, maternal',
+    concerns: ''
+  },
+  dangote: {
+    name: 'Aliko Dangote', relation: 'public figure', archetype: 'lg', age: '66',
+    isPublic: true,
+    bio: "Africa's richest man, industrial magnate, Dangote Group founder",
+    chat: "Africa must industrialize. We cannot keep exporting raw materials and importing finished goods. This is an insult to our intelligence. My grandfather was a trader and I learned from him that consistency beats talent. The refinery will change Nigeria's story. Every African entrepreneur must think on a continental scale. You always have to look at the long game. Hard work is not optional.",
+    observed: 'strategic, long-term thinker, patriotic, stoic',
+    concerns: ''
+  },
+  adesanya: {
+    name: 'Israel Adesanya', relation: 'public figure', archetype: 'gz', age: '34',
+    isPublic: true,
+    bio: 'UFC Middleweight Champion, The Last Stylebender',
+    chat: "I am the last style bender. I trained in anime and made it real. People counted me out and I loved it. You always doubt the artist. Fighting is art. Nigeria represents everywhere I go. I fight with my soul not just my body. The Stylebender era is not over. My path was different and that was the point.",
+    observed: 'confident, artistic, anime-influenced, resilient',
+    concerns: ''
+  },
+  taylor: {
+    name: 'Taylor Swift', relation: 'public figure', archetype: 'int', age: '34',
+    isPublic: true,
+    bio: 'Singer-songwriter, Eras Tour, cultural phenomenon',
+    chat: "Every album is a diary. I write about real things and people try to decode everything. The re-recordings were about ownership, not revenge. Swifties are family. I genuinely care about my fans more than anything else in my career. People say I date too much and I say that's misogynistic. I will outlast every criticism. The tortured poets department is the most personal thing I've made.",
+    observed: 'meticulous, narrative-driven, relationship-focused, loyal',
+    concerns: ''
+  },
+  kanye: {
+    name: 'Kanye West', relation: 'public figure', archetype: 'int', age: '47',
+    isPublic: true,
+    bio: 'Ye, music producer, fashion designer, polarizing icon',
+    chat: "I am a god. My music changed culture forever. Nobody can argue with my genius anymore. You always try to contain what you don't understand. I have bipolar disorder and I use it as a superpower. Kim, the kids, Yeezy — it all matters. I say what everyone thinks but won't say. The media wants to destroy me because I am too powerful. I love everyone even when I hate them.",
+    observed: 'visionary, grandiose, impulsive, emotionally volatile',
+    concerns: 'narcissism, erratic behavior, impulsivity'
+  },
+  obama: {
+    name: 'Barack Obama', relation: 'public figure', archetype: 'int', age: '62',
+    isPublic: true,
+    bio: '44th President of the United States, author, statesman',
+    chat: "Yes we can. Change is hard but it is possible when we do it together. I have made mistakes but I've always tried to move towards the better angels of our nature. My mother's values are everything to me. I believe in American exceptionalism while holding it accountable. Fatherhood is the most important thing. I still believe in hope even when it's harder to. Michelle is the backbone. The world is better when America leads with humility.",
+    observed: 'calm, articulate, empathetic, strategic, hopeful',
+    concerns: ''
+  },
+  jobs: {
+    name: 'Steve Jobs', relation: 'public figure', archetype: 'int', age: '56',
+    isPublic: true,
+    bio: 'Co-founder of Apple, Pixar, visionary — historical figure',
+    chat: "Design is not just what it looks like but how it works. Stay hungry stay foolish. The people who are crazy enough to think they can change the world are the ones who do. I would rather gamble on our vision than make a mediocre product that makes lots of money. I am convinced that about half of what separates successful entrepreneurs from non-successful ones is pure perseverance. You have to be burning with an idea or a problem or a wrong that you want to right.",
+    observed: 'perfectionist, visionary, demanding, emotionally complex',
+    concerns: 'controlling behavior, harsh treatment of others'
+  },
+  oprah: {
+    name: 'Oprah Winfrey', relation: 'public figure', archetype: 'int', age: '70',
+    isPublic: true,
+    bio: 'Media mogul, philanthropist, talk show legend',
+    chat: "The biggest adventure you can take is to live the life of your dreams. I had nothing and I built everything through storytelling and connecting with people. Gratitude is the foundation of everything. When you know better you do better. Every person has a story worth telling. My purpose is to help people see themselves more clearly. I turn wounds into wisdom. You don't become what you want you become what you believe.",
+    observed: 'empathetic, inspirational, emotionally intelligent, purpose-driven',
+    concerns: ''
+  },
+  okonkwo: {
+    name: 'Obi Okonkwo', relation: 'friend / colleague', archetype: 'igbo', age: '38',
+    isPublic: false,
+    bio: 'Fictional archetype: the high-achieving Igbo businessman',
+    chat: "Business is my language. I don't do things halfway. Success is the only option. My father built from nothing and I must build further. You always need to be hungry. Family reputation is everything. Money answers all things. I will never beg anyone for what I can earn myself. Lagos is a jungle but I know how to navigate it. Hard work, good connections, and sharp business sense. I have no time for mediocrity.",
+    observed: 'achievement-driven, proud, family-loyal, pragmatic',
+    concerns: ''
+  }
+};
+
+/* ═══════════════════════════════
+   PSYCHOLOGY DATABASES
+═══════════════════════════════ */
+const COGNITIVE_BIASES = {
+  'Confirmation Bias': 'Seeks information that confirms existing beliefs',
+  'Optimism Bias': 'Overestimates likelihood of positive outcomes',
+  'Dunning-Kruger Effect': 'Overestimates competence in areas of low skill',
+  'Fundamental Attribution Error': "Over-attributes others' behavior to personality, under-attributes to situation",
+  'In-group Bias': 'Favors members of own group unfairly',
+  'Sunk Cost Fallacy': 'Continues investing in failing ventures due to past investment',
+  'Availability Heuristic': 'Overweights recent or memorable examples',
+  'Anchoring Bias': 'Over-relies on first piece of information encountered',
+  'Hindsight Bias': 'Believes past events were more predictable than they were',
+  'Status Quo Bias': 'Prefers current state of affairs over change',
+  'Narrative Fallacy': 'Creates coherent stories from random/incomplete events',
+  'Spotlight Effect': 'Overestimates how much others notice them',
+  'Negativity Bias': 'Weighs negative experiences more heavily than positive',
+  'Projection Bias': 'Assumes others share their own feelings and beliefs',
+  'Just-World Hypothesis': 'Believes the world is fundamentally fair'
+};
+
+const DEFENSE_MECHANISMS = {
+  'Denial': 'Refuses to accept reality or facts as they are',
+  'Projection': 'Attributes own unacceptable feelings to others',
+  'Rationalization': 'Creates logical justifications for emotional decisions',
+  'Displacement': 'Redirects feelings from original target to safer one',
+  'Intellectualization': 'Uses abstract thinking to avoid emotional engagement',
+  'Regression': 'Reverts to earlier behavioral patterns under stress',
+  'Sublimation': 'Channels unacceptable impulses into socially acceptable activities',
+  'Repression': 'Unconsciously blocks distressing thoughts from awareness',
+  'Reaction Formation': 'Acts opposite to unconscious feelings',
+  'Splitting': 'Views people as all-good or all-bad, black-and-white thinking',
+  'Passive Aggression': 'Indirect expression of hostility',
+  'Idealization': 'Overvalues people, placing them on pedestal'
+};
+
+const LOVE_LANGUAGES = ['Words of Affirmation','Acts of Service','Receiving Gifts','Quality Time','Physical Touch'];
+
+const CONFLICT_STYLES = {
+  competing: 'Assertive & uncooperative — wins at all costs. Often rooted in high need for control or status preservation. Can be effective in genuine crises or when unpopular decisions must be made quickly.',
+  collaborating: 'Assertive & cooperative — seeks win-win. Most effective style for long-term relationships. Requires time and high trust. Results in the most durable outcomes.',
+  compromising: 'Middle-ground — both parties give and take. Quick and practical. Neither side fully satisfied but both feel heard. Works when time is limited or stakes are moderate.',
+  avoiding: 'Unassertive & uncooperative — withdraws or postpones. May signal emotional flooding, fear of conflict, or assessment that the fight is not worth having. Can create festering resentment.',
+  accommodating: 'Unassertive & cooperative — yields to others. Prioritizes relationship over outcome. Can build goodwill but risks resentment if chronic. Often stems from anxious attachment or people-pleasing.'
+};
+
+const ATTACHMENT_THEORY_DETAIL = {
+  'Secure': {
+    percentage: '55-60% of population',
+    origin: 'Consistent, responsive early caregiving',
+    strengths: ['Comfortable with vulnerability','Able to give and receive support','Resilient after conflict','Trusts partners without losing self'],
+    challenges: ["May underestimate others' attachment wounds",'Can seem too relaxed in high-drama situations'],
+    advice: 'You can help anxious or avoidant partners by modeling consistent behavior. Your steady presence is already regulating.'
+  },
+  'Anxious-Preoccupied': {
+    percentage: '15-20% of population',
+    origin: 'Inconsistent caregiving — sometimes responsive, sometimes absent',
+    strengths: ['Deeply attuned to emotional shifts','Highly motivated to maintain connection','Passionate and invested partners'],
+    challenges: ['Fear of abandonment','Seeks constant reassurance','May become hypervigilant to rejection cues','Protest behavior (clinginess, accusation)'],
+    advice: 'Before reacting, ask: is this response based on real evidence or an old fear? The urge to seek reassurance often needs to be sat with, not immediately acted on.'
+  },
+  'Dismissive-Avoidant': {
+    percentage: '20-25% of population',
+    origin: 'Emotionally unavailable or rejecting caregivers. Learned self-sufficiency as survival.',
+    strengths: ['Highly self-reliant','Excellent under pressure','Not emotionally reactive','Independent'],
+    challenges: ['Pushes away intimacy','Minimizes own emotional needs','Can seem cold or disengaged','Deactivates when partners seek closeness'],
+    advice: "You learned that emotions got you rejected. The risk now is that the same strategy isolates you from genuine connection. Try naming one feeling per day."
+  },
+  'Fearful-Avoidant': {
+    percentage: '5-10% of population',
+    origin: 'Often linked to early trauma or abuse — the caregiver was also the source of fear.',
+    strengths: ['Highly empathetic','Deeply perceptive','Often creatively brilliant','Passionate'],
+    challenges: ['Oscillates between craving and dreading closeness','Disorganized relational patterns','High sensitivity to rejection'],
+    advice: 'Therapy — especially EMDR, somatic work, or attachment-focused approaches — is highly transformative for fearful-avoidant individuals. The wound is complex but healable.'
+  }
+};
+
+const RELATIONSHIP_ARCHETYPES = {
+  'The Nurturer': { desc:'Gives abundantly, often at own expense. Expresses love through caregiving.', shadow:'May enable dependency or neglect own needs.' },
+  'The Achiever': { desc:'Shows love through doing and providing. Love = support structure.', shadow:'May prioritize output over emotional presence.' },
+  'The Entertainer': { desc:'Creates fun and ease. Brings lightness to every interaction.', shadow:'May avoid depth and genuine vulnerability.' },
+  'The Philosopher': { desc:'Connects through ideas, conversation, and intellectual exploration.', shadow:'May retreat into the mind when emotions feel threatening.' },
+  'The Protector': { desc:'Fiercely loyal. Will fight for those they love. Boundaries are walls, not fences.', shadow:'Can become controlling when fear activates.' },
+  'The Mirror': { desc:'Reflects others back to themselves. Highly empathetic and adaptive.', shadow:'May lose own identity in relationships.' },
+  'The Wanderer': { desc:'Values freedom and novelty. Love must leave room to breathe.', shadow:'Commitment can feel like a cage.' },
+  'The Visionary': { desc:'Sees potential everywhere. Believes in growth and transformation.', shadow:'May be more in love with the idea of a person than the reality.' }
+};
+
+const TRAUMA_RESPONSES = ['Hypervigilance','People-pleasing','Control','Emotional numbing','Perfectionism','Avoidance','Fawning','Fight response','Flight response','Freeze response'];
+const SCHWARTZ_VALUES = ['Self-Direction','Stimulation','Hedonism','Achievement','Power','Security','Conformity','Tradition','Benevolence','Universalism'];
+
+const CIALDINI_PRINCIPLES = {
+  reciprocity: 'Feels obligated to return favors — give first',
+  commitment: 'Needs to stay consistent with stated positions',
+  social_proof: 'Influenced by what peers and social group do',
+  authority: 'Respects credentials, titles, and expertise',
+  liking: 'More persuaded by people they like',
+  scarcity: 'Motivated by fear of missing out',
+  unity: 'Responds to shared identity and "we" framing'
+};
+
+const DARK_TRIAD = {
+  narcissism: 'Grandiosity, entitlement, lack of empathy',
+  machiavellianism: 'Manipulative, strategic, amoral',
+  psychopathy: 'Callousness, impulsivity, thrill-seeking'
+};
+
+const ENNEAGRAM_TYPES = {
+  1: { name:'The Perfectionist', desc:'Principled, purposeful, self-controlled. Fear: being corrupt or defective. Core need: integrity.' },
+  2: { name:'The Helper', desc:'Generous, demonstrative, people-pleasing. Fear: being unloved. Core need: to be needed.' },
+  3: { name:'The Achiever', desc:'Adaptable, excelling, image-conscious. Fear: being worthless. Core need: to be valued.' },
+  4: { name:'The Individualist', desc:'Expressive, dramatic, self-absorbed. Fear: having no identity. Core need: to be significant.' },
+  5: { name:'The Investigator', desc:'Perceptive, innovative, secretive. Fear: helplessness. Core need: knowledge and competence.' },
+  6: { name:'The Loyalist', desc:'Committed, security-oriented, suspicious. Fear: being without support. Core need: security.' },
+  7: { name:'The Enthusiast', desc:'Spontaneous, versatile, acquisitive. Fear: deprivation. Core need: to be satisfied.' },
+  8: { name:'The Challenger', desc:'Self-confident, decisive, domineering. Fear: being controlled. Core need: autonomy and power.' },
+  9: { name:'The Peacemaker', desc:'Receptive, reassuring, agreeable. Fear: conflict and separation. Core need: harmony.' }
+};
+
+/* ═══════════════════════════════
+   UTILITY
+═══════════════════════════════ */
+function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffled(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = rnd(0,i); [a[i],a[j]] = [a[j],a[i]]; }
+  return a;
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function extractQuotes(text) {
+  const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 20 && s.length < 100);
+  return shuffled(sentences).slice(0, 4);
+}
+
+function avg(arr) { return Math.round(arr.reduce((s,v) => s+v, 0) / arr.length); }
+
+/* ═══════════════════════════════
+   ANALYSIS ENGINE
+═══════════════════════════════ */
+function analyzePerson(chatText, name, relation, archetype, relDepth, observedTraits, concernAreas) {
+  const text = (chatText + ' ' + (observedTraits||'') + ' ' + (concernAreas||'')).toLowerCase();
+  const wc = text.split(/\s+/).length;
+
+  const has = (w) => text.includes(w);
+  const count = (w) => (text.match(new RegExp(w,'g'))||[]).length;
+
+  const posWords = ['love','happy','good','great','amazing','beautiful','wonderful','yes','agree','thanks','appreciate','enjoy','excited','proud','grateful','success','win'];
+  const negWords = ['hate','angry','upset','wrong','bad','never','always','leave','stupid','lie','problem','fight','hurt','pain','cry','fail','scared','alone'];
+  const empWords = ['understand','feel','sorry','care','sorry','listen','support','together','us','we'];
+  const ctrlWords = ['must','always','never','need','have to','should','demand','control','mine','right'];
+  const narcWords = ['i am','i\'m the','i never','i always','my success','i don\'t need','people don\'t understand me'];
+  const anxWords = ['worried','anxious','scared','afraid','what if','please','need you','don\'t leave','sorry','hate myself'];
+
+  const posScore = posWords.filter(w => has(w)).length;
+  const negScore = negWords.filter(w => has(w)).length;
+  const empScore = empWords.filter(w => has(w)).length;
+  const ctrlScore = ctrlWords.filter(w => has(w)).length;
+  const narcScore = narcWords.filter(w => has(w)).length;
+  const anxScore = anxWords.filter(w => has(w)).length;
+
+  // Big Five
+  const bigFive = {
+    openness: clamp(rnd(35,85) + (has('creative')||has('art')||has('imagine')||has('music')||has('dream') ? 15 : 0) - (has('routine')||has('traditional') ? 10 : 0), 10, 100),
+    conscientiousness: clamp(rnd(35,85) + (has('plan')||has('organise')||has('organize')||has('discipline')||has('work hard') ? 15 : 0) - (has('lazy')||has('forget') ? 10 : 0), 10, 100),
+    extraversion: clamp(rnd(35,85) + (posScore > 3 ? 10 : 0) + (has('party')||has('friends')||has('social')||has('people') ? 10 : 0) - (has('alone')||has('introvert')||has('quiet') ? 15 : 0), 10, 100),
+    agreeableness: clamp(rnd(35,80) + (empScore * 5) - (ctrlScore * 4) - (narcScore * 5), 10, 100),
+    neuroticism: clamp(rnd(25,75) + (anxScore * 6) + (negScore * 3) - (posScore * 2), 10, 100)
+  };
+
+  // Facets
+  const facets = {
+    openness: {
+      aesthetics: clamp(bigFive.openness + rnd(-10,10), 0, 100),
+      intellect: clamp(bigFive.openness + rnd(-10,10), 0, 100),
+      adventurousness: clamp(bigFive.openness + rnd(-15,15), 0, 100)
+    },
+    conscientiousness: {
+      achievement: clamp(bigFive.conscientiousness + rnd(-10,10), 0, 100),
+      selfdiscipline: clamp(bigFive.conscientiousness + rnd(-10,10), 0, 100)
+    },
+    neuroticism: {
+      anxiety: clamp(bigFive.neuroticism + rnd(-10,10), 0, 100),
+      depression: clamp(bigFive.neuroticism + rnd(-15,10), 0, 100)
+    },
+    agreeableness: {
+      trust: clamp(bigFive.agreeableness + rnd(-15,10), 0, 100),
+      compliance: clamp(bigFive.agreeableness + rnd(-10,15), 0, 100)
+    },
+    extraversion: {
+      assertiveness: clamp(bigFive.extraversion + rnd(-10,15), 0, 100),
+      warmth: clamp(bigFive.extraversion + rnd(-5,10), 0, 100)
+    }
+  };
+
+  // Values
+  const values = {};
+  SCHWARTZ_VALUES.forEach(v => {
+    values[v] = rnd(30, 90);
+  });
+  if (has('family')) values['Benevolence'] = clamp(values['Benevolence']+20, 0, 100);
+  if (has('success')||has('achieve')||has('win')) values['Achievement'] = clamp(values['Achievement']+20, 0, 100);
+  if (ctrlScore > 2) values['Power'] = clamp(values['Power']+20, 0, 100);
+  if (has('god')||has('faith')||has('pray')) values['Tradition'] = clamp(values['Tradition']+20, 0, 100);
+
+  // MBTI
+  const mbtiI = bigFive.extraversion > 55 ? 'E' : 'I';
+  const mbtiN = bigFive.openness > 55 ? 'N' : 'S';
+  const mbtiT = bigFive.agreeableness < 50 ? 'T' : 'F';
+  const mbtiJ = bigFive.conscientiousness > 55 ? 'J' : 'P';
+  const mbti = mbtiI + mbtiN + mbtiT + mbtiJ;
+  const mbtiDesc = getMBTIDesc(mbti);
+
+  // Attachment
+  let attachment = 'Secure';
+  let attachDesc = 'Shows balanced approach to intimacy and independence.';
+  if (anxScore > 3 && negScore > 4) { attachment = 'Anxious-Preoccupied'; attachDesc = 'Craves closeness and fears abandonment. May oscillate between intense connection and withdrawal.'; }
+  else if (has('don\'t need') || has('i\'m fine alone') || has('space') && negScore > 2) { attachment = 'Dismissive-Avoidant'; attachDesc = 'Values independence highly. Downplays emotional needs. May disengage when intimacy increases.'; }
+  else if (anxScore > 2 && ctrlScore > 2) { attachment = 'Fearful-Avoidant'; attachDesc = 'Simultaneously desires and fears closeness. Behavioral patterns can seem contradictory. Likely rooted in early relational experience.'; }
+  else { attachDesc = 'Shows secure, consistent approach to relationships. Able to be both vulnerable and autonomous.'; }
+
+  // Love Language
+  const llScores = {};
+  LOVE_LANGUAGES.forEach(l => llScores[l] = rnd(20, 80));
+  if (has('appreciate')||has('thank you')||has('compliment')||has('tell me')) llScores['Words of Affirmation'] = clamp(llScores['Words of Affirmation']+25, 0, 100);
+  if (has('do')||has('help')||has('fix')||has('cook')) llScores['Acts of Service'] = clamp(llScores['Acts of Service']+20, 0, 100);
+  if (has('gift')||has('present')||has('surprise')||has('buy')) llScores['Receiving Gifts'] = clamp(llScores['Receiving Gifts']+25, 0, 100);
+  if (has('time')||has('together')||has('be with')||has('presence')) llScores['Quality Time'] = clamp(llScores['Quality Time']+20, 0, 100);
+  if (has('touch')||has('hug')||has('hold')||has('close')) llScores['Physical Touch'] = clamp(llScores['Physical Touch']+25, 0, 100);
+  const primaryLL = Object.entries(llScores).sort((a,b)=>b[1]-a[1])[0][0];
+
+  // Red Flags
+  const redFlags = [];
+  if (count('never') > 3 || count('always') > 3) redFlags.push({ type:'Absolutist Thinking', severity:'medium', example:'"You always…" / "You never…"', impact:'Prevents nuanced conflict resolution; often invalidates the other person.' });
+  if (has('leave me')||has('you\'ll regret')||has('without me')) redFlags.push({ type:'Abandonment Threats', severity:'high', example:'Using threat of departure as leverage', impact:'Creates trauma bonding; emotional manipulation tactic.' });
+  if (ctrlScore > 3) redFlags.push({ type:'Control Patterns', severity:'medium', example:'Frequent must/always/never/need language', impact:'May indicate need to dominate rather than collaborate.' });
+  if (narcScore > 3) redFlags.push({ type:'Narcissistic Signals', severity:'medium', example:'"People don\'t understand me" / "I\'m the only one"', impact:'Limited capacity for genuine empathy in conflict.' });
+  if (has('hit')||has('slap')||has('hurt you')||has('threaten')) redFlags.push({ type:'Physical Aggression Signal', severity:'high', example:'Language implying or threatening physical harm', impact:'SERIOUS: Seek professional guidance immediately.' });
+  if (has('lie')||has('cheat')||has('deceive')||has('pretend')) redFlags.push({ type:'Deception Indicators', severity:'medium', example:'References to lying or pretense', impact:'Trust may be compromised; verify before confiding.' });
+
+  // Biases
+  const biasKeys = shuffled(Object.keys(COGNITIVE_BIASES));
+  const numBiases = rnd(3, 6);
+  let uniqueBiases = biasKeys.slice(0, numBiases);
+  if (bigFive.neuroticism > 60 && !uniqueBiases.includes('Negativity Bias')) uniqueBiases.push('Negativity Bias');
+  if (narcScore > 2 && !uniqueBiases.includes('Spotlight Effect')) uniqueBiases.push('Spotlight Effect');
+  if (ctrlScore > 2 && !uniqueBiases.includes('Confirmation Bias')) uniqueBiases.push('Confirmation Bias');
+  uniqueBiases = [...new Set(uniqueBiases)].slice(0,6);
+
+  const defMechKeys = shuffled(Object.keys(DEFENSE_MECHANISMS));
+  let uniqueDefMechs = defMechKeys.slice(0, rnd(2, 4));
+  if (anxScore > 2) uniqueDefMechs.push('Rationalization');
+  if (ctrlScore > 3) uniqueDefMechs.push('Projection');
+  if (has('don\'t care')) uniqueDefMechs.push('Denial');
+  uniqueDefMechs = [...new Set(uniqueDefMechs)].slice(0,5);
+
+  // Conflict Style
+  let conflictStyle = 'compromising';
+  if (ctrlScore > 3 || narcScore > 4) conflictStyle = 'competing';
+  else if (anxScore > 3 && has('sorry')) conflictStyle = 'avoiding';
+  else if (empScore > 4) conflictStyle = 'collaborating';
+  else if (has('sorry') && facets.agreeableness.compliance > 60) conflictStyle = 'accommodating';
+
+  // Dark Triad
+  const darkTriad = {
+    narcissism: clamp(rnd(10,50) + (narcScore * 6), 0, 100),
+    machiavellianism: clamp(rnd(10,50) + (ctrlScore * 5), 0, 100),
+    psychopathy: clamp(rnd(5,35) + (negScore > 5 ? 15 : 0), 0, 100)
+  };
+
+  // Communication Style
+  const commStyle = {
+    directness: clamp(rnd(20,95) + (ctrlScore > 1 ? 10 : -5), 0, 100),
+    formality: clamp(rnd(15,85) - (archetype==='gz'||archetype==='lg' ? 15 : 0), 0, 100),
+    emotionalExpressiveness: clamp(rnd(30,90) + (posScore+negScore > 5 ? 10 : 0), 0, 100),
+    humor: clamp(rnd(15,80) + (has('lol')||has('haha')||has('joke') ? 20 : 0), 0, 100),
+    storytelling: clamp(rnd(25,85) + (archetype==='na'||archetype==='el' ? 15 : 0), 0, 100),
+    listenability: clamp(rnd(30,80) + (empScore > 3 ? 15 : 0), 0, 100),
+    sarcasm: clamp(rnd(10,70) + (archetype==='gz' ? 20 : 0), 0, 100),
+    vulnerability: clamp(rnd(15,70) + (anxScore > 2 ? 10 : 0), 0, 100)
+  };
+
+  // Influence Keys
+  const influence = [];
+  if (values['Achievement'] > 65) influence.push({key:'authority', tip:'Reference credentials, titles, or proven track records'});
+  if (values['Benevolence'] > 65) influence.push({key:'liking', tip:'Build genuine rapport; they respond to warmth and sincerity'});
+  if (values['Conformity'] > 65) influence.push({key:'social proof', tip:'Show what peers, community, or respected figures do'});
+  if (bigFive.conscientiousness > 60) influence.push({key:'commitment & consistency', tip:'Get a small initial agreement; they will follow through'});
+  if (values['Stimulation'] > 65) influence.push({key:'scarcity', tip:'Highlight limited-time or exclusive opportunities'});
+  if (bigFive.agreeableness > 60) influence.push({key:'reciprocity', tip:'Give first — they will feel obligated to return the gesture'});
+  influence.push({key:'unity', tip:'Use "we" framing; emphasize shared identity and common ground'});
+
+  // Trauma Responses
+  const traumaResp = [];
+  if (facets.neuroticism.anxiety > 60) traumaResp.push('Hypervigilance','Anxiety spiral');
+  if (facets.agreeableness.compliance > 70) traumaResp.push('People-pleasing','Fawning');
+  if (ctrlScore > 2) traumaResp.push('Control');
+  if (has("i don't care") && facets.neuroticism.depression > 50) traumaResp.push('Emotional numbing');
+  if (facets.conscientiousness.achievement > 80) traumaResp.push('Perfectionism');
+  if (traumaResp.length === 0) traumaResp.push('Situational stress responses only');
+
+  // Cultural Archetype
+  const archetypeData = getCultureArchetype(archetype);
+
+  // Timeline
+  const topics = ['work','family','money','romance','friends','health','identity','status'];
+  const eventTypes = ['positive conversation','argument','withdrawal','reconnection','breakthrough','tension','celebration','silence','conflict escalation','emotional disclosure'];
+  const timeline = Array.from({length:12}, (_,i) => {
+    const sentiment = clamp(rnd(20,85) + (i===5||i===9 ? -20 : 0) + (i===3||i===7 ? 15 : 0), 5, 95);
+    return { week:i+1, sentiment, mood: sentiment > 65 ? 'positive' : sentiment > 40 ? 'neutral' : 'negative', topic: pick(topics), event: pick(eventTypes) };
+  });
+
+  // Interaction Tips
+  const doThis = [];
+  const avoidThis = [];
+  if (bigFive.agreeableness > 60) { doThis.push('Show appreciation frequently'); avoidThis.push('Public criticism'); }
+  if (bigFive.conscientiousness > 65) { doThis.push('Be punctual and follow through'); avoidThis.push('Last-minute changes'); }
+  if (bigFive.extraversion > 60) { doThis.push('Engage them in social settings'); avoidThis.push('Too much one-on-one intensity early'); }
+  if (attachment === 'Anxious-Preoccupied') { doThis.push('Provide regular reassurance'); avoidThis.push('Sudden distance or silence'); }
+  if (attachment === 'Dismissive-Avoidant') { doThis.push('Respect their need for space'); avoidThis.push('Emotional demands or clinginess'); }
+  if (conflictStyle === 'competing') { doThis.push('Frame disagreements as shared challenges'); avoidThis.push('Direct challenges to their authority'); }
+  doThis.push('Use their preferred communication channel');
+  avoidThis.push('Surprising them with major decisions');
+
+  // Enneagram
+  let ennType = 9;
+  if (narcScore > 4 && values['Power'] > 65) ennType = 8;
+  else if (bigFive.conscientiousness > 75 && bigFive.neuroticism > 55) ennType = 1;
+  else if (bigFive.agreeableness > 70 && empScore > 3) ennType = 2;
+  else if (values['Achievement'] > 75 && bigFive.conscientiousness > 65) ennType = 3;
+  else if (bigFive.openness > 75 && bigFive.neuroticism > 55) ennType = 4;
+  else if (bigFive.openness > 70 && bigFive.extraversion < 45) ennType = 5;
+  else if (anxScore > 3 && facets.agreeableness.trust < 45) ennType = 6;
+  else if (bigFive.extraversion > 70 && values['Stimulation'] > 65) ennType = 7;
+  else ennType = bigFive.agreeableness > 65 ? 2 : bigFive.conscientiousness > 65 ? 3 : 9;
+
+  // Relationship Archetype
+  const relArchetypeKeys = Object.keys(RELATIONSHIP_ARCHETYPES);
+  let relArchetype = relArchetypeKeys[0];
+  if (bigFive.agreeableness > 65 && bigFive.conscientiousness > 60) relArchetype = 'The Nurturer';
+  else if (bigFive.conscientiousness > 70 && values['Achievement'] > 70) relArchetype = 'The Achiever';
+  else if (bigFive.extraversion > 70) relArchetype = 'The Entertainer';
+  else if (bigFive.openness > 70 && bigFive.extraversion < 50) relArchetype = 'The Philosopher';
+  else if (bigFive.conscientiousness > 65 && bigFive.agreeableness < 50) relArchetype = 'The Protector';
+  else if (bigFive.agreeableness > 70 && bigFive.neuroticism > 55) relArchetype = 'The Mirror';
+  else if (bigFive.openness > 65 && bigFive.conscientiousness < 50) relArchetype = 'The Wanderer';
+  else if (bigFive.openness > 70 && values['Achievement'] > 65) relArchetype = 'The Visionary';
+  else relArchetype = pick(relArchetypeKeys);
+
+  // EQ
+  const eq = {
+    selfAwareness: clamp(rnd(30,80) + (bigFive.openness > 60 ? 10 : 0) + (anxScore > 2 ? -5 : 0), 0, 100),
+    selfRegulation: clamp(rnd(25,80) - (bigFive.neuroticism > 65 ? 15 : 0) + (bigFive.conscientiousness > 65 ? 10 : 0), 0, 100),
+    motivation: clamp(rnd(40,90) + (values['Achievement'] > 65 ? 10 : 0), 0, 100),
+    empathy: clamp(rnd(30,85) + (empScore * 6) + (bigFive.agreeableness > 65 ? 10 : 0), 0, 100),
+    socialSkills: clamp(rnd(30,85) + (bigFive.extraversion > 60 ? 12 : 0) + (empScore > 2 ? 8 : 0), 0, 100)
+  };
+  const eqTotal = Math.round(avg(Object.values(eq)));
+
+  return {
+    bigFive, facets, values, mbti, mbtiDesc, attachment, attachDesc,
+    redFlags, biases: uniqueBiases, defenseMechanisms: uniqueDefMechs,
+    loveLanguage: primaryLL, llScores, conflictStyle, darkTriad,
+    communication: commStyle, influence, traumaResponses: traumaResp,
+    archetype: archetypeData, timeline, doThis, avoidThis,
+    relArchetype, relArchetypeData: RELATIONSHIP_ARCHETYPES[relArchetype] || {},
+    ennType, ennData: ENNEAGRAM_TYPES[ennType] || {},
+    eq, eqTotal,
+    quotes: extractQuotes(chatText),
+    wordCount: wc, signalScore: posScore - negScore,
+    computedAt: new Date().toISOString()
+  };
+}
+
+function getCultureArchetype(code) {
+  const data = {
+    lg: { name:'Lagos Big Man', desc:'Respect is currency. Status must be visible — car, clothes, connections. Hierarchy is sacred. Communicates indirectly when face is at stake. Generosity is strategic.', keys:['status signalling','hierarchical respect','strategic generosity','indirect criticism'] },
+    abj: { name:'Abuja Elite', desc:'Everything is political. Relationships = leverage. Reputation is carefully managed. Indirect communication masks true intentions.', keys:['political thinking','reputation management','indirect communication','strategic patience'] },
+    na: { name:'Naija Auntie', desc:'Family first, second, and always. Uses proverbs as weapons. Criticism is indirect. Prayer is a solution to every problem.', keys:['family-centric','proverb communication','indirect criticism','food as love'] },
+    el: { name:'Old School Elder', desc:'Respect is non-negotiable. Titles must be used. Stories are teaching tools. Emotional expression is controlled.', keys:['formal address required','storytelling wisdom','emotional restraint','legacy-focused'] },
+    yoruba: { name:'Yoruba Diplomatic', desc:'Social harmony above all. Honour the family name. Proverbs and euphemisms are preferred to direct conflict.', keys:['social harmony','honour code','euphemistic communication','peace-making'] },
+    igbo: { name:'Igbo Entrepreneur', desc:'Achievement is identity. Business is personal. Direct and pragmatic in communication. Hard work is the only acceptable narrative.', keys:['achievement-identity','pragmatic directness','business-first','results over process'] },
+    hausa: { name:'Hausa Traditionalist', desc:'Faith guides decisions above all. Reserved in emotional expression. Community consensus is important.', keys:['faith-guided','reserved communication','communal decision-making','elder deference'] },
+    gh: { name:'Ghana Cool', desc:'Calm confidence, no need to shout. Education and intellectual credibility are prized. Values diplomacy.', keys:['quiet confidence','education pride','diplomatic humor','anti-performative'] },
+    za: { name:'South African Urban', desc:'Code-switching fluency. Has navigated multiple identity layers. Resilient under pressure.', keys:['code-switching','resilience','direct confrontation','experience-based authority'] },
+    ke: { name:'Nairobi Hustler', desc:'Tech-savvy, startup-minded. Highly adaptive to new systems. Values efficiency.', keys:['tech-adaptive','efficiency','networked ambition','startup mindset'] },
+    gz: { name:'Gen-Z Ironic', desc:'Emotionally guarded behind irony and memes. Vulnerability shown through humor. Highly aware of social dynamics.', keys:['ironic detachment','meme communication','anti-cringe filter','authenticity radar'] },
+    ml: { name:'Millennial Burnout', desc:'Anxiety about not being enough. Productivity guilt. Works hard but questions the whole system. Therapy-aware.', keys:['anxiety-productivity loop','therapy language','nostalgic','system-questioning'] },
+    int: { name:'International / Neutral', desc:'No strong cultural bias detected. Communicates across cultural registers. Adapts style to context.', keys:['cross-cultural','adaptive','context-switching','neutral framing'] }
+  };
+  return data[code] || data['int'];
+}
+
+function getMBTIDesc(mbti) {
+  const descs = {
+    INTJ:'The Architect — strategic, private, driven by long-term vision. Values competence above all.',
+    INTP:'The Logician — analytical, detached, loves ideas and systems more than social games.',
+    ENTJ:'The Commander — decisive, ambitious, natural leader, can be overpowering.',
+    ENTP:'The Debater — loves to challenge ideas, intellectually curious, can be argumentative.',
+    INFJ:'The Advocate — rare idealist with deep convictions, empathetic but private.',
+    INFP:'The Mediator — values authenticity, emotional depth, easily hurt by conflict.',
+    ENFJ:'The Protagonist — charismatic, empathetic, natural motivator and connector.',
+    ENFP:'The Campaigner — enthusiastic, creative, connects deeply but struggles with follow-through.',
+    ISTJ:'The Inspector — reliable, traditional, duty-bound, resists change.',
+    ISFJ:'The Protector — warm, caring, loyal to tradition, may suppress own needs.',
+    ESTJ:'The Director — organised, assertive, values rules and competence.',
+    ESFJ:'The Consul — socially skilled, values harmony, highly attuned to others\' approval.',
+    ISTP:'The Virtuoso — practical, observant, cool under pressure, values freedom.',
+    ISFP:'The Adventurer — gentle, artistic, lives in the present, avoids conflict.',
+    ESTP:'The Entrepreneur — bold, direct, thrives on action and immediate results.',
+    ESFP:'The Entertainer — spontaneous, fun-loving, draws energy from social attention.'
+  };
+  return descs[mbti] || 'A complex personality that defies simple categorization.';
+}
+
+/* ═══════════════════════════════
+   SIMULATION ENGINE
+═══════════════════════════════ */
+function simulateInteraction(person, userMsg, scenario) {
+  const p = person.personality;
+  const name = person.name.split(' ')[0];
+  const replies = [];
+
+  const attachment = p.attachment;
+  const neuroticism = p.bigFive.neuroticism;
+  const agreeableness = p.bigFive.agreeableness;
+  const extraversion = p.bigFive.extraversion;
+  const conscientiousness = p.bigFive.conscientiousness;
+  const directness = p.communication.directness;
+
+  const conflictReplies = [
+    directness>65 ? `"Look, I need you to understand my point of view before we go further."` : `"I hear what you're saying but I don't think you're seeing the full picture."`,
+    neuroticism>60 ? `"This is exactly what I was worried about. We always end up here."` : `"Let's both take a step back — this doesn't need to escalate."`,
+    agreeableness<45 ? `"I'm not going to pretend I agree when I clearly don't."` : `"I want to work this out but you have to meet me halfway."`
+  ];
+  const datingReplies = [
+    extraversion>60 ? `"I like this energy. Tell me more — I want to actually get to know you."` : `"That's interesting. Give me some time to process that."`,
+    directness>65 ? `"I'll be honest — I'm intrigued. But I don't do games. You?"` : `"There's something about this conversation I find hard to walk away from."`,
+    attachment==='Anxious-Preoccupied' ? `"I just need to know we're on the same page — I don't want to misread this."` : attachment==='Dismissive-Avoidant' ? `"This is nice. Just keep it light for now."` : `"I'm enjoying this. Let's see where it goes naturally."`
+  ];
+  const workReplies = [
+    conscientiousness>65 ? `"Send me a brief with the key points. I'll review and come back to you by end of day."` : `"Let's align on priorities first before we move."`,
+    p.values['Achievement'] > 70 ? `"What does success look like here and who owns what?"` : `"I think we can find a solution that works for everyone."`,
+    `"Let me think about this properly. Can we reconvene tomorrow?"`
+  ];
+  const familyReplies = [
+    `"With all due respect, this is a family matter and it should stay that way."`,
+    agreeableness>60 ? `"I hear you and I know your intentions are good. But I need space to process."` : `"I don't think this is the right time for this conversation."`,
+    attachment==='Anxious-Preoccupied' ? `"Please don't shut me out. I'm trying to connect."` : `"I need some time to think this through before I respond."`
+  ];
+
+  const scenarioMap = {
+    conflict_argue: conflictReplies, conflict_silent: [
+      `"I don't have anything more to say right now."`,
+      `"Sometimes silence is the answer."`,
+      attachment==='Dismissive-Avoidant' ? `"I need space. We'll talk when I'm ready."` : `"I'm not ignoring you — I'm just overwhelmed."`
+    ],
+    conflict_boundary: [`"I hear you. I'm going to need some time to think about that."`, `"I respect that. But I need you to respect my boundaries too."`, directness>65 ? `"That's a hard no from me. Not negotiable."` : `"I'm not sure that works for me — can we find a middle ground?"`],
+    dating_flirt: datingReplies, dating_deeper: [`"I've been thinking about us a lot lately."`, `"What do you actually want? Not what you think you should want — what do you actually want?"`, `"I'm ready to go deeper if you are."`],
+    dating_apology: [`"I appreciate you saying that. It means more than you know."`, agreeableness>60 ? `"I forgive you. I've been holding onto this too long anyway."` : `"I hear the apology. I just need more time."`, attachment==='Anxious-Preoccupied' ? `"Thank you. Can we just not do that again? Because it really hurt."` : `"Okay. Let's move forward."`],
+    dating_breakup: [`"I think I knew this was coming."`, `"This hurts but I respect you for being honest."`, neuroticism>60 ? `"I don't know how to process this right now."` : `"I hope we can both grow from this."`],
+    work_ask: workReplies, work_negotiation: [`"I can work with that if we adjust the timeline."`, `"What's your best offer? Let's not waste each other's time."`, `"I've done my research. Here's what I think is fair."`],
+    work_feedback: [`"That's useful. I'll factor it in."`, conscientiousness>65 ? `"I appreciate the directness. I'd rather know."` : `"I hear you — though I'd see it differently."`, `"Thanks for saying this. Can you give me specific examples?"`],
+    family_elder: familyReplies, family_confront: [`"I've been waiting to have this conversation for a long time."`, `"This isn't easy for me to say, but it needs to be said."`, agreeableness>65 ? `"I love this family too much to keep pretending this isn't happening."` : `"Someone has to say it."`],
+    social_persuade: [`"You make a good point. Let me think about it."`, `"I'm not convinced yet but I'm listening."`, p.values['Conformity'] > 65 ? `"If everyone else is doing it, maybe there's something to it."` : `"Show me the evidence and I'll reconsider."`],
+    social_apology: [`"I've missed you too. I didn't realize how much until now."`, `"Life got complicated. I should have reached out sooner."`, `"Let's not make it weird. Same as before?"`]
+  };
+
+  const selectedReplies = scenarioMap[scenario] || conflictReplies;
+  const emotions = ['Guarded','Neutral','Warm','Defensive','Open','Skeptical','Engaged','Withdrawn'];
+  const confidences = ['High confidence','Moderate confidence','Lower confidence'];
+
+  selectedReplies.forEach((text, i) => {
+    replies.push({ text, emotion: pick(emotions), confidence: pick(confidences), variant: ['Primary Response','Alternative Response','Stress Response'][i] || 'Response' });
+  });
+
+  const recommendations = {
+    conflict_argue: { primary:`Lead with **acknowledgment**, not your argument. ${name} responds better when they feel heard first. Then present your view.`, timing:'Wait 20 minutes after any escalation before continuing.', avoid:'Avoid "you always" and "you never" — these activate defensiveness immediately.', framing:'Use "I feel" not "You did"' },
+    dating_flirt: { primary:`Match their energy level. ${agreeableness>60?'Warmth and genuine interest will open them.':'Directness and authenticity matter most — they dislike game-playing.'}`, timing:'Follow their lead on pace.', avoid:'Avoid moving too fast or pushing for labels.', framing:'Curiosity over intention' },
+    work_ask: { primary:`Come prepared with data. ${name} responds to ${p.values['Achievement']>65?'results and track records':'logic and fair process'}.`, timing:'Ask early in the week, not Friday.', avoid:'Avoid emotional appeals without supporting data.', framing:'Mutual benefit, not personal need' },
+    default: { primary:`Read their energy and match it. ${name} responds best to ${directness>65?'directness and clarity':'patience and indirect framing'}.`, timing:'Choose your moment — not when they seem stressed.', avoid:'Avoid assumptions about what they want.', framing:'Curiosity and openness' }
+  };
+
+  return { replies, recommendation: recommendations[scenario] || recommendations.default };
+}
+
+/* ═══════════════════════════════
+   LIBRARY RENDER
+═══════════════════════════════ */
+function renderLibrary() {
+  const query = (document.getElementById('librarySearch').value || '').toLowerCase();
+  let filtered = persons.filter(p => {
+    if (query && !p.name.toLowerCase().includes(query) && !p.relation.toLowerCase().includes(query)) return false;
+    if (currentFilter === 'flagged' && (!p.personality || p.personality.redFlags.length === 0)) return false;
+    if (currentFilter === 'compatible' && (!p.personality || p.personality.eqTotal < 60)) return false;
+    if (currentFilter === 'public' && !p.isPublic) return false;
+    return true;
+  });
+
+  const list = document.getElementById('personList');
+  const empty = document.getElementById('emptyLibraryMsg');
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    list.innerHTML = filtered.map(p => {
+      const pl = p.personality;
+      const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const hasFlags = pl && pl.redFlags.length > 0;
+      const mbti = pl ? pl.mbti : '';
+      return `<div class="person-card" onclick="selectPerson('${p.id}')">
+        <div class="avatar">${initials}</div>
+        <div class="person-info">
+          <div class="person-name">${p.name}</div>
+          <div class="person-meta">${p.relation}${p.age ? ' · ' + p.age : ''}</div>
+        </div>
+        <div class="person-card-right">
+          ${mbti ? `<span class="badge badge-gold">${mbti}</span>` : ''}
+          ${hasFlags ? `<span class="badge badge-red">⚑ flags</span>` : ''}
+          ${p.isPublic ? `<span class="badge badge-muted">public</span>` : ''}
+          <button class="delete-btn" onclick="event.stopPropagation();deletePerson('${p.id}')">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Stats summary
+  const statsArea = document.getElementById('libStatsArea');
+  if (persons.length > 0) {
+    const avgEQ = Math.round(persons.filter(p=>p.personality).reduce((s,p)=>s+p.personality.eqTotal,0) / persons.filter(p=>p.personality).length);
+    const flagged = persons.filter(p=>p.personality && p.personality.redFlags.length>0).length;
+    statsArea.innerHTML = `<div class="sec-label" style="margin-top:14px">Library Overview</div><div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-block"><div class="stat-value">${persons.length}</div><div class="stat-label">Profiles</div></div>
+      <div class="stat-block"><div class="stat-value">${avgEQ||'—'}</div><div class="stat-label">Avg EQ</div></div>
+      <div class="stat-block"><div class="stat-value">${flagged}</div><div class="stat-label">Flagged</div></div>
+    </div>`;
+  } else {
+    statsArea.innerHTML = '';
+  }
+}
+
+function selectPerson(id) {
+  currentPersonId = id;
+  setActiveView('mirror');
+}
+
+function deletePerson(id) {
+  persons = persons.filter(p => p.id !== id);
+  if (currentPersonId === id) currentPersonId = null;
+  savePeople();
+  renderLibrary();
+  toast('Profile removed');
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('filter' + f.charAt(0).toUpperCase() + f.slice(1)).classList.add('active');
+  renderLibrary();
+}
+
+/* ═══════════════════════════════
+   MIRROR VIEW
+═══════════════════════════════ */
+function renderMirrorView() {
+  const person = persons.find(p => p.id === currentPersonId);
+  if (!person || !person.personality) {
+    document.getElementById('noPersonMirror').classList.remove('hidden');
+    document.getElementById('mirrorContent').classList.add('hidden');
+    return;
+  }
+  document.getElementById('noPersonMirror').classList.add('hidden');
+  document.getElementById('mirrorContent').classList.remove('hidden');
+
+  const pl = person.personality;
+  const initials = person.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  document.getElementById('mirrorPersonCard').innerHTML = `
+    <div class="card card-gold" style="display:flex;align-items:center;gap:14px;padding:14px 16px">
+      <div class="avatar" style="width:50px;height:50px;font-size:1.3rem">${initials}</div>
+      <div style="flex:1">
+        <div style="font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--cream)">${person.name}</div>
+        <div style="font-family:var(--mono);font-size:0.67rem;color:var(--text3);margin-top:2px;letter-spacing:0.04em">${person.relation}${person.age ? ' · ' + person.age : ''}</div>
+        <div style="display:flex;gap:5px;margin-top:6px;flex-wrap:wrap">
+          <span class="badge badge-gold">${pl.mbti}</span>
+          <span class="badge badge-blue">${pl.attachment}</span>
+          <span class="badge badge-amber">${pl.conflictStyle}</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--gold)">${pl.eqTotal}</div>
+        <div style="font-family:var(--mono);font-size:0.58rem;color:var(--text3);letter-spacing:0.08em">EQ</div>
+      </div>
+    </div>`;
+
+  setupSimulate();
+  showMirrorTab('profile');
+}
+
+function showMirrorTab(tab) {
+  ['profile','simulate','playbook','voice'].forEach(t => {
+    document.getElementById('mirrorTab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('hidden', t !== tab);
+    const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+  if (tab === 'profile') renderProfileTab();
+  if (tab === 'playbook') renderPlaybookTab();
+  if (tab === 'voice') renderVoiceTab();
+}
+window.showMirrorTab = showMirrorTab;
+
+function renderProfileTab() {
+  const person = persons.find(p => p.id === currentPersonId);
+  if (!person) return;
+  const pl = person.personality;
+
+  // Big Five
+  document.getElementById('bigFiveSection').innerHTML = `<div class="card">
+    <div class="sec-label">Big Five · OCEAN</div>
+    <div class="kv"><span class="kv-k">MBTI Estimate</span><span class="kv-v" style="font-family:var(--mono);color:var(--gold)">${pl.mbti} — ${pl.mbtiDesc.split('—')[0].trim()}</span></div>
+    <div class="kv"><span class="kv-k">Enneagram</span><span class="kv-v">Type ${pl.ennType}: ${pl.ennData.name||''}</span></div>
+    ${['openness','conscientiousness','extraversion','agreeableness','neuroticism'].map(k => {
+      const v = pl.bigFive[k];
+      const cls = k==='neuroticism' && v>65 ? 'red' : k==='agreeableness' && v>65 ? 'green' : '';
+      return `<div class="trait-row"><span class="trait-name">${k.slice(0,5).toUpperCase()}</span><div class="trait-bar"><div class="trait-fill ${cls}" style="width:${v}%"></div></div><span class="trait-val">${v}</span></div>`;
+    }).join('')}
+  </div>`;
+
+  // Values
+  const topVals = Object.entries(pl.values).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('valuesSection').innerHTML = `<div class="card">
+    <div class="sec-label">Core Values · Schwartz</div>
+    <div class="flex-row">${topVals.map(([k,v]) => `<span class="chip chip-gold">${k}: ${v}</span>`).join('')}</div>
+  </div>`;
+
+  // Facets
+  document.getElementById('facetsSection').innerHTML = `<div class="accordion">
+    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+      <span>Personality Facets (detailed)</span><i class="fa fa-chevron-down toggle-icon"></i>
+    </div>
+    <div class="accordion-body" style="padding-top:10px">
+      ${Object.entries(pl.facets).map(([trait, facetObj]) =>
+        Object.entries(facetObj).map(([facet, val]) =>
+          `<div class="trait-row"><span class="trait-name" style="width:140px;font-size:0.63rem">${trait.slice(0,4)} › ${facet}</span><div class="trait-bar"><div class="trait-fill" style="width:${val}%"></div></div><span class="trait-val">${val}</span></div>`
+        ).join('')
+      ).join('')}
+    </div>
+  </div>`;
+
+  // Attachment
+  const attachDetailData = ATTACHMENT_THEORY_DETAIL[pl.attachment] || {};
+  document.getElementById('attachmentSection').innerHTML = `<div class="card">
+    <div class="sec-label">Attachment & Intimacy</div>
+    <div class="flex-row" style="margin-bottom:8px">
+      <span class="badge badge-blue">${pl.attachment}</span>
+      <span class="badge badge-amber">Conflict: ${pl.conflictStyle}</span>
+      <span class="badge badge-gold">Love: ${pl.loveLanguage}</span>
+    </div>
+    <div class="insight-box">${pl.attachDesc}</div>
+    ${attachDetailData.percentage ? `<div class="kv" style="margin-top:8px"><span class="kv-k">Population</span><span class="kv-v">${attachDetailData.percentage}</span></div>` : ''}
+    ${attachDetailData.origin ? `<div class="kv"><span class="kv-k">Origin</span><span class="kv-v">${attachDetailData.origin}</span></div>` : ''}
+    ${attachDetailData.strengths ? `<div class="sec-label" style="margin-top:10px">Strengths</div><div class="flex-row">${attachDetailData.strengths.map(s=>`<span class="green-chip">${s}</span>`).join('')}</div>` : ''}
+    ${attachDetailData.challenges ? `<div class="sec-label">Challenges</div><div class="flex-row">${attachDetailData.challenges.map(c=>`<span class="flag-chip">${c}</span>`).join('')}</div>` : ''}
+    ${attachDetailData.advice ? `<div class="insight-box" style="margin-top:8px;border-color:rgba(100,190,160,0.2);background:rgba(39,174,96,0.04)">${attachDetailData.advice}</div>` : ''}
+    <div class="sec-label" style="margin-top:10px">Love Language Breakdown</div>
+    ${Object.entries(pl.llScores).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="trait-row"><span class="trait-name" style="width:150px;font-size:0.65rem">${k}</span><div class="trait-bar"><div class="trait-fill green" style="width:${v}%"></div></div><span class="trait-val">${v}</span></div>`).join('')}
+    <div class="sec-label" style="margin-top:10px">Conflict Style</div>
+    <p style="font-size:0.8rem;color:var(--text3);line-height:1.6;font-weight:300">${CONFLICT_STYLES[pl.conflictStyle]||pl.conflictStyle}</p>
+  </div>`;
+
+  // Red Flags
+  let rfHtml = `<div class="card"><div class="sec-label">Red Flags & Warnings</div>`;
+  if (pl.redFlags.length) {
+    pl.redFlags.forEach(r => {
+      const sevClass = r.severity === 'high' ? 'badge-red' : r.severity === 'medium' ? 'badge-amber' : 'badge-muted';
+      rfHtml += `<div style="border:1px solid var(--line);padding:10px 12px;margin:6px 0;background:var(--bg3)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px"><span class="badge ${sevClass}">${r.severity}</span><strong style="font-size:0.82rem;color:var(--cream)">${r.type}</strong></div>
+        <p style="font-family:var(--mono);font-size:0.67rem;color:var(--text3);margin-top:2px">${r.example}</p>
+        <p style="font-family:var(--mono);font-size:0.67rem;color:#c07070;margin-top:2px">${r.impact}</p>
+      </div>`;
+    });
+  } else {
+    rfHtml += `<div class="green-chip" style="display:block;text-align:center;padding:10px">No significant red flags detected in text</div>`;
+  }
+  rfHtml += '</div>';
+  document.getElementById('redFlagsSection').innerHTML = rfHtml;
+
+  // Biases + Defenses
+  document.getElementById('biasesSection').innerHTML = `
+  <div class="accordion">
+    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')"><span>Cognitive Biases (detected)</span><i class="fa fa-chevron-down toggle-icon"></i></div>
+    <div class="accordion-body" style="padding-top:8px">
+      ${pl.biases.map(b => `<div class="playbook-item"><span class="playbook-icon">◆</span><div class="playbook-text"><strong>${b}</strong><p>${COGNITIVE_BIASES[b]||'A systematic pattern of deviation from rationality in judgment.'}</p></div></div>`).join('')}
+    </div>
+  </div>
+  <div class="accordion" style="margin-top:4px">
+    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')"><span>Defense Mechanisms</span><i class="fa fa-chevron-down toggle-icon"></i></div>
+    <div class="accordion-body" style="padding-top:8px">
+      ${pl.defenseMechanisms.map(d => `<div class="playbook-item"><span class="playbook-icon">◇</span><div class="playbook-text"><strong>${d}</strong><p>${DEFENSE_MECHANISMS[d]||'A psychological strategy to protect against anxiety and stress.'}</p></div></div>`).join('')}
+    </div>
+  </div>`;
+
+  // Dark Triad
+  document.getElementById('defensesSection').innerHTML = `<div class="accordion">
+    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')"><span>Dark Triad Indicators</span><i class="fa fa-chevron-down toggle-icon"></i></div>
+    <div class="accordion-body" style="padding-top:8px">
+      <p style="font-family:var(--mono);font-size:0.65rem;color:var(--text3);margin-bottom:10px;letter-spacing:0.03em">Probabilistic estimates only. All humans have some level of these traits.</p>
+      ${Object.entries(pl.darkTriad).map(([k,v]) => {
+        const level = v > 65 ? '<span class="badge badge-red">Elevated</span>' : v > 40 ? '<span class="badge badge-amber">Moderate</span>' : '<span class="badge badge-green">Low</span>';
+        const cls = v>65 ? 'red' : v>40 ? 'amber' : '';
+        return `<div class="trait-row"><span class="trait-name" style="width:130px;text-transform:capitalize">${k}</span>${level}<div class="trait-bar" style="margin-left:6px;flex:1"><div class="trait-fill ${cls}" style="width:${v}%"></div></div><span class="trait-val">${v}</span></div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // Trauma Responses & Tips
+  document.getElementById('loveLanguageSection').innerHTML = `<div class="accordion">
+    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')"><span>Trauma Responses & Interaction Tips</span><i class="fa fa-chevron-down toggle-icon"></i></div>
+    <div class="accordion-body" style="padding-top:8px">
+      <div class="sec-label">Likely Trauma Responses</div>
+      <div class="flex-row">${pl.traumaResponses.map(t => `<span class="flag-chip">${t}</span>`).join('')}</div>
+      <div class="sec-label" style="margin-top:12px">Do This</div>
+      ${pl.doThis.map(d => `<div class="green-chip" style="display:block;margin:3px 0;padding:7px 10px">✓ ${d}</div>`).join('')}
+      <div class="sec-label" style="margin-top:8px">Avoid This</div>
+      ${pl.avoidThis.map(d => `<div class="flag-chip" style="display:block;margin:3px 0;padding:7px 10px">✕ ${d}</div>`).join('')}
+    </div>
+  </div>`;
+
+  // Quotes
+  document.getElementById('quotesSection').innerHTML = pl.quotes.length ? `<div class="card">
+    <div class="sec-label">Key Phrases from Text</div>
+    ${pl.quotes.map(q => `<div class="quote-block">"${q}"</div>`).join('')}
+  </div>` : '';
+
+  // Cultural Archetype + Rel Archetype + EQ
+  document.getElementById('conflictSection').innerHTML = `<div class="card">
+    <div class="sec-label">Cultural Archetype</div>
+    <div style="margin-bottom:8px"><span class="badge badge-gold">${person.personality.archetype.name}</span></div>
+    <p style="font-size:0.82rem;color:var(--text3);line-height:1.6;margin-bottom:10px;font-weight:300">${person.personality.archetype.desc}</p>
+    <div class="flex-row">${person.personality.archetype.keys.map(k => `<span class="chip">${k}</span>`).join('')}</div>
+  </div>
+  <div class="card">
+    <div class="sec-label">Relationship Archetype</div>
+    <div style="margin-bottom:8px"><span class="badge badge-green">${pl.relArchetype}</span></div>
+    <p style="font-size:0.82rem;color:var(--text);margin-bottom:6px;font-weight:400">${pl.relArchetypeData.desc||''}</p>
+    <p style="font-size:0.78rem;color:#c07070;font-weight:300"><strong style="color:var(--text3)">Shadow:</strong> ${pl.relArchetypeData.shadow||''}</p>
+  </div>
+  <div class="card">
+    <div class="sec-label">Emotional Intelligence</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+      <div class="num-callout">${pl.eqTotal}</div>
+      <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text3);letter-spacing:0.06em">/ 100 · ${pl.eqTotal>75?'HIGH EQ':pl.eqTotal>55?'MODERATE EQ':'DEVELOPING EQ'}</div>
+    </div>
+    ${Object.entries(pl.eq||{}).map(([k,v])=>{
+      const label = k.replace(/([A-Z])/g,' $1').toLowerCase();
+      return `<div class="trait-row"><span class="trait-name" style="width:120px;font-size:0.65rem">${label}</span><div class="trait-bar"><div class="trait-fill" style="width:${v}%"></div></div><span class="trait-val">${v}</span></div>`;
+    }).join('')}
+    <div class="insight-box" style="margin-top:10px">
+      ${(pl.eq?.empathy||0)>70?'Strong empathic capacity — feels into others readily.':'Empathy may be selective or situational.'}
+      ${(pl.eq?.selfRegulation||0)>65?' Good emotional regulation under stress.':' May struggle to regulate emotions under pressure.'}
+      ${(pl.eq?.socialSkills||0)>65?' Socially adept — navigates group dynamics well.':' Social navigation may require conscious effort.'}
+    </div>
+  </div>`;
+}
+
+function renderPlaybookTab() {
+  const person = persons.find(p => p.id === currentPersonId);
+  if (!person) return;
+  const pl = person.personality;
+
+  let html = `<div class="card">
+    <div class="sec-label">Enneagram</div>
+    <div style="margin-bottom:8px"><span class="badge badge-gold">Type ${pl.ennType}: ${pl.ennData.name||''}</span></div>
+    <div class="insight-box">${pl.ennData.desc||''}</div>
+  </div>`;
+
+  html += `<div class="card"><div class="sec-label">Influence Playbook · Cialdini</div>
+    <p style="font-family:var(--mono);font-size:0.67rem;color:var(--text3);margin-bottom:10px;letter-spacing:0.04em">Principles ranked by effectiveness with this person:</p>`;
+  pl.influence.forEach((inf, i) => {
+    html += `<div class="playbook-item">
+      <div class="playbook-icon" style="font-family:var(--mono);font-size:0.75rem;color:var(--gold)">${['01','02','03','04','05','06','07'][i]||'—'}</div>
+      <div class="playbook-text"><strong>${inf.key.replace(/_/g,' ').toUpperCase()}</strong><p>${inf.tip}</p></div>
+    </div>`;
+  });
+  html += '</div>';
+
+  html += `<div class="card"><div class="sec-label">Communication Style Map</div>`;
+  Object.entries(pl.communication).forEach(([k,v]) => {
+    const label = k.replace(/([A-Z])/g, ' $1').toLowerCase();
+    html += `<div class="trait-row"><span class="trait-name" style="width:140px;font-size:0.65rem">${label}</span><div class="trait-bar"><div class="trait-fill" style="width:${v}%"></div></div><span class="trait-val">${v}</span></div>`;
+  });
+  html += '</div>';
+
+  html += `<div class="card"><div class="sec-label">Engagement Scripts</div>`;
+  const scripts = generateScripts(person);
+  scripts.forEach(s => {
+    html += `<div class="playbook-item"><div class="playbook-icon">${s.icon}</div><div class="playbook-text"><strong>${s.title}</strong><p>${s.script}</p></div></div>`;
+  });
+  html += '</div>';
+
+  document.getElementById('playbookContent').innerHTML = html;
+}
+
+function generateScripts(person) {
+  const pl = person.personality;
+  const name = person.name.split(' ')[0];
+  const scripts = [];
+  const topInfluence = pl.influence[0];
+  if (topInfluence && topInfluence.key === 'authority') scripts.push({icon:'◈', title:'Authority Opening', script:`"I've been reading research from [expert] on this — the data is compelling. I think you'd appreciate the rigor behind it, ${name}."`});
+  if (topInfluence && topInfluence.key === 'liking') scripts.push({icon:'◎', title:'Rapport Builder', script:`"I've genuinely enjoyed our conversations — you have a perspective I don't often find. I'd love to think through this together."`});
+  scripts.push({icon:'◆', title:'Conflict De-escalation', script:`"I'm not here to win the argument. I genuinely want to understand where you're coming from, ${name}. What would feel fair to you?"`});
+  scripts.push({icon:'◇', title:'Emotional Bridge', script:`"I feel like we're both saying the same thing in different ways. At the core, we both want ${pl.bigFive.agreeableness>55?'to feel respected':'clarity and progress'}. Right?"`});
+  scripts.push({icon:'○', title:'Exit with Grace', script:`"I think we both need time to process this. Let's not force a resolution tonight — sometimes distance creates clarity."`});
+  if (pl.attachment === 'Anxious-Preoccupied') scripts.push({icon:'●', title:'Reassurance Script', script:`"Nothing about how I feel has changed. I just need some space to think clearly — and I'll be back."`});
+  if (pl.attachment === 'Dismissive-Avoidant') scripts.push({icon:'○', title:'Opening the Avoidant', script:`"No pressure, no expectations. I just want to talk, no agenda."`});
+  return scripts;
+}
+
+function renderVoiceTab() {
+  const person = persons.find(p => p.id === currentPersonId);
+  if (!person) return;
+  const pl = person.personality;
+  const archetype = pl.archetype;
+  const directness = pl.communication.directness;
+  const formality = pl.communication.formality;
+  const emotionalExp = pl.communication.emotionalExpressiveness;
+  const humor = pl.communication.humor;
+  const storytelling = pl.communication.storytelling;
+
+  let html = `<div class="card">
+    <div class="sec-label">Voice & Language Signature</div>
+    <div class="insight-box">
+      ${directness>70?'Speaks directly and assertively.':directness<40?'Communicates indirectly, often through implication.':'Moderately direct depending on context.'}
+      ${formality>70?' Prefers formal register.':formality<35?' Uses casual/street language naturally.':' Adapts formality to audience.'}
+      ${emotionalExp>65?' Emotionally expressive.':' Emotionally restrained.'}
+      ${humor>60?' Humor is a primary bonding tool.':''}
+      ${storytelling>65?' Loves narrative and storytelling.':''}
+    </div>
+    <div class="sec-label">Likely Verbal Patterns</div>
+    ${getVerbalPatterns(archetype.name, pl).map(p => `<div class="quote-block">${p}</div>`).join('')}
+    <div class="sec-label" style="margin-top:12px">How to Mirror Their Language</div>
+    <div class="insight-box">
+      ${directness>65?'Be direct. State your point first, then support it.':'Embed your main point inside narrative. They receive indirect framing better.'}
+      ${formality>65?' Use proper titles and structured language.':' Loosen your language. Match their casual register.'}
+      ${emotionalExp>60?' Acknowledge feelings explicitly before logic.':' Lead with facts and structure. Save emotional language for key moments.'}
+      ${storytelling>65?' Use anecdotes and metaphors. Abstract concepts land better through stories.':''}
+    </div>
+    <div class="sec-label">Communication Triggers to Avoid</div>
+    <div class="flex-row">
+      ${pl.avoidThis.map(a => `<span class="flag-chip">✕ ${a}</span>`).join('')}
+      ${pl.attachment === 'Anxious-Preoccupied' ? `<span class="flag-chip">✕ Going silent</span>` : ''}
+      ${pl.communication.sarcasm < 40 ? `<span class="flag-chip">✕ Sarcasm</span>` : ''}
+    </div>
+  </div>`;
+
+  document.getElementById('voiceContent').innerHTML = html;
+}
+
+function getVerbalPatterns(archetypeName, pl) {
+  const patterns = [];
+  if (archetypeName.includes('Lagos') || archetypeName.includes('Igbo') || archetypeName.includes('Yoruba') || archetypeName.includes('Naija')) {
+    patterns.push('"Last last, e go be fine." — resigned optimism');
+    patterns.push('"Abeg, let us not go there today." — deflection');
+    patterns.push('"God dey." — faith as anchor in uncertainty');
+  }
+  if (archetypeName.includes('Gen-Z')) {
+    patterns.push('"No cap, that\'s lowkey accurate." — ironic validation');
+    patterns.push('"It\'s giving..." — vague aesthetic judgment');
+    patterns.push('"Respectfully, that\'s not it." — polite disagreement');
+  }
+  if (archetypeName.includes('Elder') || archetypeName.includes('Hausa') || archetypeName.includes('Traditiona')) {
+    patterns.push('"In my time, things were different." — wisdom claim');
+    patterns.push('"The elders say that..." — proverb intro');
+    patterns.push('"Respect must come before conversation." — authority assertion');
+  }
+  if (pl.bigFive.neuroticism > 60) patterns.push('"I just need to know everything is fine." — reassurance seeking');
+  if (pl.communication.directness > 70) patterns.push('"Let me be honest with you:" — directness signal');
+  if (pl.bigFive.agreeableness > 65) patterns.push('"Whatever works for you." — accommodation pattern');
+  if (!patterns.length) patterns.push('"I think we need to think about this more carefully." — processing signal', '"From where I\'m standing, the situation looks different." — perspective assertion');
+  return patterns;
+}
+
+function setupSimulate() {
+  document.getElementById('simulateBtn').onclick = () => {
+    const person = persons.find(p => p.id === currentPersonId);
+    if (!person) return;
+    const msg = document.getElementById('simInput').value.trim();
+    if (!msg) return;
+    const scenario = document.getElementById('scenarioSelect').value;
+    const out = simulateInteraction(person, msg, scenario);
+
+    let html = `<div class="sec-label" style="margin-top:12px">Likely Responses</div>`;
+    out.replies.forEach(r => {
+      html += `<div class="sim-card">
+        <div class="sim-label">${r.variant} · ${r.confidence}</div>
+        <div class="sim-text">${r.text}</div>
+        <div style="margin-top:6px"><span class="chip">${r.emotion}</span></div>
+      </div>`;
+    });
+    html += `<div class="card" style="border-color:var(--gold-dim);background:rgba(201,168,76,0.04)">
+      <div class="sec-label" style="margin-top:0">Recommended Approach</div>
+      <p style="font-size:0.83rem;line-height:1.6;margin-bottom:8px;font-weight:300">${out.recommendation.primary.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</p>
+      <div class="kv"><span class="kv-k">Timing</span><span class="kv-v">${out.recommendation.timing}</span></div>
+      <div class="kv"><span class="kv-k">Framing</span><span class="kv-v">${out.recommendation.framing}</span></div>
+      <p style="font-family:var(--mono);font-size:0.67rem;color:#c07070;margin-top:8px;letter-spacing:0.03em">${out.recommendation.avoid}</p>
+    </div>`;
+    document.getElementById('simulationResults').innerHTML = html;
+  };
+}
+
+/* ═══════════════════════════════
+   PATTERNS VIEW
+═══════════════════════════════ */
+function renderPatternsView() {
+  const select = document.getElementById('patternsPersonSelect');
+  let opts = '<option value="">— select a person —</option>';
+  persons.forEach(p => opts += `<option value="${p.id}">${p.name}</option>`);
+  select.innerHTML = opts;
+  if (currentPersonId) select.value = currentPersonId;
+  select.onchange = () => renderPersonPatterns(select.value);
+  if (select.value) renderPersonPatterns(select.value);
+}
+
+function renderPersonPatterns(id) {
+  const person = persons.find(p => p.id === id);
+  if (!person) {
+    document.getElementById('patternsContent').innerHTML = '<div class="empty-state"><div class="empty-icon">◈</div><p>Select a person to see their patterns.</p></div>';
+    return;
+  }
+  const pl = person.personality;
+
+  const maxSentiment = Math.max(...pl.timeline.map(t => t.sentiment));
+  const timelineBars = pl.timeline.map(t => {
+    const h = Math.round((t.sentiment/100)*50)+6;
+    const cls = t.mood === 'positive' ? '' : t.mood === 'negative' ? 'negative' : 'neutral';
+    return `<div class="t-bar ${cls}" style="height:${h}px" data-tip="W${t.week}: ${t.event} (${t.topic})"></div>`;
+  }).join('');
+
+  let html = `<div class="card">
+    <div class="sec-label">12-Week Behavioral Timeline</div>
+    <div class="timeline-bars">${timelineBars}</div>
+    <div class="flex-row">
+      <span class="green-chip">● Positive</span>
+      <span class="badge badge-amber" style="padding:4px 8px">● Neutral</span>
+      <span class="flag-chip">● Negative</span>
+    </div>
+    <div style="margin-top:8px">${pl.timeline.filter(t=>t.mood!=='neutral').slice(0,4).map(t => `<div class="dark-tag">W${t.week}: ${t.event} · ${t.topic}</div>`).join('')}</div>
+  </div>`;
+
+  html += `<div class="card"><div class="sec-label">Flag Summary</div>`;
+  if (pl.redFlags.length) {
+    pl.redFlags.forEach(r => {
+      html += `<div class="flag-chip" style="display:block;margin:4px 0;padding:8px 10px">${r.type} — <span style="color:var(--text3)">${r.impact}</span></div>`;
+    });
+  } else {
+    html += `<div class="green-chip" style="display:block;text-align:center;padding:12px">No flags detected</div>`;
+  }
+  html += '</div>';
+
+  const emoWords = [];
+  if (pl.bigFive.neuroticism > 65) emoWords.push({w:'Anxious',c:'#c07070'},{w:'Reactive',c:'#c07070'});
+  if (pl.bigFive.agreeableness > 65) emoWords.push({w:'Warm',c:'#6bbf7f'},{w:'Giving',c:'#6bbf7f'});
+  if (pl.bigFive.extraversion > 65) emoWords.push({w:'Energetic',c:'#7ab0d0'},{w:'Social',c:'#7ab0d0'});
+  if (pl.bigFive.conscientiousness > 65) emoWords.push({w:'Disciplined',c:'#d4a04a'},{w:'Reliable',c:'#d4a04a'});
+  if (pl.bigFive.openness > 65) emoWords.push({w:'Creative',c:'#c4b5fd'},{w:'Curious',c:'#c4b5fd'});
+  emoWords.push({w:pl.attachment,c:'var(--gold2)'},{w:pl.loveLanguage.split(' ')[0],c:'#f9a8d4'});
+  html += `<div class="card"><div class="sec-label">Emotional Signature</div><div class="flex-row">${emoWords.map(e => `<span class="chip" style="color:${e.c};border-color:${e.c}55">${e.w}</span>`).join('')}</div></div>`;
+
+  const growthAreas = [];
+  if (pl.bigFive.neuroticism > 65) growthAreas.push({area:'Emotional Regulation', desc:'DBT skills — distress tolerance, emotional regulation, mindfulness — are particularly effective. Consider structured self-reflection practices.', icon:'○'});
+  if (pl.bigFive.agreeableness < 40) growthAreas.push({area:'Empathy Development', desc:'Building active listening and perspective-taking could significantly improve relationships. Empathy can be trained through deliberate practice.', icon:'◎'});
+  if (pl.darkTriad.narcissism > 55) growthAreas.push({area:'Egoic Awareness', desc:'Developing genuine curiosity about others (beyond utility) unlocks deeper connections. The shift from "what can this person do for me" to "who is this person really" opens profound relational possibilities.', icon:'◆'});
+  if (pl.attachment === 'Anxious-Preoccupied') growthAreas.push({area:'Attachment Security', desc:'Attachment-Based Therapy or CBT can shift toward more secure functioning. Learning to self-soothe and delay protest behavior creates earned security.', icon:'◇'});
+  if (pl.attachment === 'Dismissive-Avoidant') growthAreas.push({area:'Emotional Accessibility', desc:"Gradual vulnerability practice — starting with low-risk disclosures — can rewire avoidant patterns. The belief 'I don't need anyone' is protective armor, not truth.", icon:'○'});
+  if (pl.bigFive.conscientiousness < 40) growthAreas.push({area:'Structure & Follow-Through', desc:'Simple habits like daily planning, time-blocking, and accountability partners can dramatically improve outcomes.', icon:'●'});
+  if (!growthAreas.length) growthAreas.push({area:'Continued Development', desc:'No critical growth areas flagged. This profile shows relatively balanced trait distribution. Focus on maintaining strengths and deepening self-awareness.', icon:'◎'});
+
+  html += `<div class="card"><div class="sec-label">Growth Opportunities</div>`;
+  growthAreas.forEach(g => {
+    html += `<div class="playbook-item"><div class="playbook-icon" style="font-family:var(--mono);color:var(--gold)">${g.icon}</div><div class="playbook-text"><strong>${g.area}</strong><p>${g.desc}</p></div></div>`;
+  });
+  html += '</div>';
+
+  const safetyFactors = [];
+  const riskFactors = [];
+  if (pl.bigFive.agreeableness > 60) safetyFactors.push('High agreeableness — generally cooperative and warm');
+  if (pl.attachment === 'Secure') safetyFactors.push('Secure attachment — stable and trustworthy');
+  if (pl.bigFive.conscientiousness > 65) safetyFactors.push('High conscientiousness — reliable and follows through');
+  if (pl.redFlags.length === 0) safetyFactors.push('No red flags detected in analyzed text');
+  if (pl.bigFive.neuroticism > 70) riskFactors.push('Very high neuroticism — emotional volatility risk');
+  if (pl.darkTriad.narcissism > 60) riskFactors.push('Elevated narcissistic traits — empathy limitations');
+  if (pl.darkTriad.machiavellianism > 60) riskFactors.push('Elevated Machiavellianism — possible strategic manipulation');
+  if (pl.redFlags.some(r => r.severity === 'high')) riskFactors.push('High-severity red flags present');
+  const safetyScore = Math.max(20, Math.min(100, 60 + (safetyFactors.length * 8) - (riskFactors.length * 12)));
+  const safetyLabel = safetyScore > 70 ? 'Generally Safe' : safetyScore > 50 ? 'Proceed with Awareness' : 'Exercise Caution';
+  const safetyColor = safetyScore > 70 ? '#6bbf7f' : safetyScore > 50 ? '#d4a04a' : '#c07070';
+
+  html += `<div class="card">
+    <div class="sec-label">Relationship Safety Index</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+      <div class="num-callout" style="color:${safetyColor}">${safetyScore}</div>
+      <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text3);letter-spacing:0.06em">/ 100 · ${safetyLabel.toUpperCase()}</div>
+    </div>
+    ${safetyFactors.length ? `<div class="sec-label" style="margin-top:0">Safety Indicators</div>${safetyFactors.map(f=>`<div class="green-chip" style="display:block;margin:3px 0;padding:7px 10px">✓ ${f}</div>`).join('')}` : ''}
+    ${riskFactors.length ? `<div class="sec-label">Risk Indicators</div>${riskFactors.map(f=>`<div class="flag-chip" style="display:block;margin:3px 0;padding:7px 10px">⚠ ${f}</div>`).join('')}` : ''}
+  </div>`;
+
+  document.getElementById('patternsContent').innerHTML = html;
+}
+
+/* ═══════════════════════════════
+   YOU VIEW
+═══════════════════════════════ */
+function renderYouView() {
+  const quizFields = [
+    {id:'q_open', label:'Openness to experience', def:60},
+    {id:'q_consc', label:'Conscientiousness / discipline', def:65},
+    {id:'q_extra', label:'Extraversion / sociability', def:50},
+    {id:'q_agree', label:'Agreeableness / warmth', def:60},
+    {id:'q_neuro', label:'Neuroticism / emotional reactivity', def:45}
+  ];
+
+  if (!document.getElementById('q_open')) {
+    document.getElementById('quizSliders').innerHTML = quizFields.map(f =>
+      `<div class="slider-row"><label><span>${f.label}</span><strong id="${f.id}_val" style="color:var(--gold)">${f.def}</strong></label>
+      <input type="range" id="${f.id}" min="0" max="100" value="${f.def}" oninput="document.getElementById('${f.id}_val').textContent=this.value"></div>`
+    ).join('');
+  }
+
+  document.getElementById('saveQuizBtn').onclick = () => {
+    const qBF = {
+      openness: parseInt(document.getElementById('q_open').value),
+      conscientiousness: parseInt(document.getElementById('q_consc').value),
+      extraversion: parseInt(document.getElementById('q_extra').value),
+      agreeableness: parseInt(document.getElementById('q_agree').value),
+      neuroticism: parseInt(document.getElementById('q_neuro').value)
+    };
+    const ll = LOVE_LANGUAGES[rnd(0,4)];
+    const attachments = ['Secure','Anxious-Preoccupied','Dismissive-Avoidant','Fearful-Avoidant'];
+    selfProfile = { bigFive: qBF, attachment: attachments[rnd(0,3)], loveLanguage: ll, source:'quiz', savedAt: new Date().toISOString() };
+    localStorage.setItem(SELF_KEY, JSON.stringify(selfProfile));
+    renderSelfProfile();
+    toast('Self-assessment saved');
+  };
+
+  document.getElementById('runSelfAnalysis').onclick = () => {
+    const text = document.getElementById('selfText').value.trim();
+    if (text.length < 10) { toast('Add more text for analysis'); return; }
+    const p = analyzePerson(text, 'You', 'self', 'int', 'intimate', '', '');
+    selfProfile = { bigFive: p.bigFive, attachment: p.attachment, loveLanguage: p.loveLanguage, source:'text', eq: p.eq, savedAt: new Date().toISOString() };
+    localStorage.setItem(SELF_KEY, JSON.stringify(selfProfile));
+    renderSelfProfile();
+    toast('Self analysis complete');
+  };
+
+  renderSelfProfile();
+
+  document.getElementById('exportReportBtn').onclick = exportData;
+  document.getElementById('importReportBtn').onclick = () => document.getElementById('importFileInput').click();
+  document.getElementById('importFileInput').onchange = importData;
+  document.getElementById('clearAllBtn').onclick = () => {
+    if (!confirm('Clear all data?')) return;
+    persons = []; selfProfile = null;
+    localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(SELF_KEY);
+    renderLibrary(); renderSelfProfile();
+    toast('All data cleared');
+  };
+}
+
+function renderSelfProfile() {
+  const display = document.getElementById('selfProfileDisplay');
+  const compareSection = document.getElementById('compareSection');
+
+  if (!selfProfile) {
+    display.innerHTML = '<div class="insight-box" style="margin-bottom:10px">No self profile yet. Run self-analysis or complete the quick assessment below.</div>';
+    compareSection.classList.add('hidden');
+    return;
+  }
+
+  const bf = selfProfile.bigFive;
+  display.innerHTML = `<div class="card card-gold">
+    <div class="sec-label">Your Profile</div>
+    <div class="kv"><span class="kv-k">Attachment</span><span class="kv-v badge badge-blue" style="padding:2px 8px">${selfProfile.attachment}</span></div>
+    <div class="kv"><span class="kv-k">Love Language</span><span class="kv-v">${selfProfile.loveLanguage}</span></div>
+    <div class="kv"><span class="kv-k">Source</span><span class="kv-v" style="font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em">${selfProfile.source}</span></div>
+    <div style="margin-top:10px">
+      ${Object.entries(bf).map(([k,v]) => `<div class="trait-row"><span class="trait-name" style="width:110px;font-size:0.65rem">${k.slice(0,5).toUpperCase()}</span><div class="trait-bar"><div class="trait-fill" style="width:${v}%"></div></div><span class="trait-val">${v}</span></div>`).join('')}
+    </div>
+  </div>`;
+
+  if (persons.length > 0) {
+    compareSection.classList.remove('hidden');
+    const sel = document.getElementById('compareSelect');
+    sel.innerHTML = '<option value="">— compare with —</option>' + persons.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    sel.onchange = () => {
+      const pid = sel.value;
+      const other = persons.find(p => p.id === pid);
+      if (!other) return;
+      renderCompatibility(selfProfile, other);
+    };
+  } else {
+    compareSection.classList.add('hidden');
+  }
+}
+
+/* ═══════════════════════════════
+   COMPATIBILITY
+═══════════════════════════════ */
+function computeCompatibility(self, other) {
+  const keys = ['openness','conscientiousness','extraversion','agreeableness','neuroticism'];
+  const weights = [0.15, 0.2, 0.2, 0.25, 0.2];
+  let score = 0;
+  keys.forEach((k,i) => {
+    const diff = Math.abs(self.bigFive[k] - other.bigFive[k]);
+    score += (1 - diff/100) * weights[i] * 100;
+  });
+  if (self.attachment === other.attachment) score += 5;
+  if ((self.attachment === 'Secure') || (other.attachment === 'Secure')) score += 3;
+  return Math.min(100, Math.round(score));
+}
+
+function renderCompatibility(self, other) {
+  // 'other' is a full person object with other.personality
+  const otherPl = other.personality;
+  const score = computeCompatibility(self, otherPl);
+  const level = score > 75 ? {label:'High', color:'#6bbf7f'} : score > 55 ? {label:'Moderate', color:'#d4a04a'} : {label:'Challenging', color:'#c07070'};
+  const frictions = [];
+  if (Math.abs(self.bigFive.extraversion - otherPl.bigFive.extraversion) > 35) frictions.push('Energy levels — introvert/extrovert gap');
+  if (Math.abs(self.bigFive.agreeableness - otherPl.bigFive.agreeableness) > 35) frictions.push('Communication warmth differences');
+  if (Math.abs(self.bigFive.conscientiousness - otherPl.bigFive.conscientiousness) > 35) frictions.push('Structure & planning approach');
+  if (Math.abs(self.bigFive.neuroticism - otherPl.bigFive.neuroticism) > 35) frictions.push('Emotional regulation styles');
+  const synergies = [];
+  if (Math.abs(self.bigFive.openness - otherPl.bigFive.openness) < 20) synergies.push('Similar intellectual curiosity');
+  if (self.attachment === otherPl.attachment) synergies.push('Matching attachment styles — strong emotional compatibility');
+  if (self.loveLanguage === otherPl.loveLanguage) synergies.push('Same love language — natural emotional connection');
+
+  document.getElementById('comparisonResult').innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+      <div class="num-callout" style="color:${level.color}">${score}</div>
+      <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text3);letter-spacing:0.06em">% · ${level.label.toUpperCase()} COMPATIBILITY</div>
+    </div>
+    ${synergies.length ? `<div class="sec-label" style="margin-top:0">Natural Synergies</div>${synergies.map(s=>`<div class="green-chip" style="display:block;margin:4px 0;padding:7px 10px">✓ ${s}</div>`).join('')}` : ''}
+    ${frictions.length ? `<div class="sec-label">Potential Friction Points</div>${frictions.map(f=>`<div class="flag-chip" style="display:block;margin:4px 0;padding:7px 10px">⚡ ${f}</div>`).join('')}` : ''}
+  `;
+}
+
+/* ═══════════════════════════════
+   PUBLIC FIGURE LOADER
+═══════════════════════════════ */
+document.getElementById('loadPublicBtn').onclick = function() {
+  const val = document.getElementById('publicFigureSelect').value;
+  if (!val || !publicFigures[val]) return;
+  const fig = publicFigures[val];
+  document.getElementById('personName').value = fig.name;
+  document.getElementById('personRelation').value = fig.relation;
+  document.getElementById('cultureArchetype').value = fig.archetype;
+  document.getElementById('chatHistory').value = fig.chat;
+  document.getElementById('personAge').value = fig.age || '';
+  document.getElementById('observedTraits').value = fig.observed || '';
+  document.getElementById('concernAreas').value = fig.concerns || '';
+  const info = document.getElementById('publicFigureInfo');
+  info.classList.remove('hidden');
+  info.textContent = `⚠ Public figure profile based on publicly available information and AI probabilistic modeling. For illustrative purposes only.${fig.bio ? ' — ' + fig.bio : ''}`;
+};
+
+/* ═══════════════════════════════
+   ANALYZE BUTTON
+═══════════════════════════════ */
+document.getElementById('analyzeBtn').onclick = function() {
+  const name = document.getElementById('personName').value.trim();
+  const relation = document.getElementById('personRelation').value.trim();
+  const archetype = document.getElementById('cultureArchetype').value;
+  const relDepth = document.getElementById('relationshipDepth').value;
+  const chat = document.getElementById('chatHistory').value.trim();
+  const age = document.getElementById('personAge').value.trim();
+  const observed = document.getElementById('observedTraits').value.trim();
+  const concerns = document.getElementById('concernAreas').value.trim();
+  if (!name || !relation || chat.length < 10) { toast('Fill name, relationship and text fields'); return; }
+
+  const personality = analyzePerson(chat, name, relation, archetype, relDepth, observed, concerns);
+  const newPerson = {
+    id: Date.now()+'',
+    name, relation, archetype, age, chat,
+    isPublic: document.getElementById('publicFigureSelect').value !== '',
+    personality
+  };
+  persons.push(newPerson);
+  currentPersonId = newPerson.id;
+  savePeople();
+
+  ['personName','personRelation','personAge','chatHistory','observedTraits','concernAreas'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('publicFigureSelect').value = '';
+  document.getElementById('publicFigureInfo').classList.add('hidden');
+
+  toast(`${name} analyzed`);
+  setActiveView('mirror');
+};
+
+/* ═══════════════════════════════
+   EXPORT / IMPORT
+═══════════════════════════════ */
+function exportData() {
+  const data = { version:'4.0', exportedAt: new Date().toISOString(), self: selfProfile, library: persons };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `mirrormind_${Date.now()}.json`;
+  a.click();
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.library) { persons = data.library; savePeople(); }
+      if (data.self) { selfProfile = data.self; localStorage.setItem(SELF_KEY, JSON.stringify(selfProfile)); }
+      renderLibrary();
+      toast('Data imported');
+    } catch(err) { toast('Import failed — invalid file'); }
+  };
+  reader.readAsText(file);
+}
+
+function savePeople() { localStorage.setItem(STORAGE_KEY, JSON.stringify(persons)); }
+
+/* ═══════════════════════════════
+   NAVIGATION
+═══════════════════════════════ */
+function setActiveView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId+'View').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+  const navBtn = document.querySelector(`.nav-item[data-view="${viewId}"]`);
+  if (navBtn) navBtn.classList.add('active');
+  if (viewId === 'library') renderLibrary();
+  if (viewId === 'mirror') renderMirrorView();
+  if (viewId === 'patterns') renderPatternsView();
+  if (viewId === 'you') renderYouView();
+}
+window.setActiveView = setActiveView;
+
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => setActiveView(btn.dataset.view));
+});
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+(function init() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) { try { persons = JSON.parse(stored); } catch(e) { persons = []; } }
+  const storedSelf = localStorage.getItem(SELF_KEY);
+  if (storedSelf) { try { selfProfile = JSON.parse(storedSelf); } catch(e) { selfProfile = null; } }
+
+  if (!persons.length) {
+    const seedPersonality = analyzePerson(
+      "I need space. Why are you always like this? You never listen. I love you but I need time to think. You must understand that I can't keep doing this. I always try my best but it's never enough for you. Everyone takes me for granted. I don't need anyone.",
+      'Folake', 'partner (dating)', 'na', 'intimate', 'emotional, smart, ambitious', 'anxiety, avoidance'
+    );
+    persons = [{
+      id: 'seed1', name: 'Folake', relation: 'partner (dating)', archetype: 'na', age: '28', chat: 'seeded',
+      isPublic: false, personality: seedPersonality
+    }];
+    savePeople();
+  }
+
+  setActiveView('library');
+})();
+
+})();
+</script>
+</body>
+</html>
